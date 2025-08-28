@@ -22,6 +22,7 @@ This repository contains a stock management system with a Flutter frontend, PHP 
 3. **Frontend Setup**
    - Open `flutter_application_1` in VS Code.
    - Run `flutter pub get`.
+   - Start XAMPP and make sure both Apache and MySQL services are running.
    - Start the app with `flutter run`.
 
 ## Requirements
