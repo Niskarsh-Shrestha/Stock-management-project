@@ -1,0 +1,48 @@
+<?php
+header("Content-Type: application/json");
+include 'db.php';
+
+$data = json_decode(file_get_contents("php://input"));
+$email = trim($data->email ?? '');
+$code = trim($data->code ?? '');
+
+if (empty($email) || empty($code)) {
+    echo json_encode(["success" => false, "message" => "Email and code are required."]);
+    exit;
+}
+
+$sql = "SELECT login_code FROM users WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 1) {
+    $row = $result->fetch_assoc();
+    if ($row['login_code'] === $code) {
+        // Clear code after successful verification
+        $clear = $conn->prepare("UPDATE users SET login_code = NULL WHERE email = ?");
+        $clear->bind_param("s", $email);
+        $clear->execute();
+
+        // Fetch user info
+        $userInfo = $conn->prepare("SELECT username, email, role FROM users WHERE email = ?");
+        $userInfo->bind_param("s", $email);
+        $userInfo->execute();
+        $userResult = $userInfo->get_result();
+        $user = $userResult->fetch_assoc();
+
+        echo json_encode([
+            "success" => true,
+            "message" => "Login successful.",
+            "username" => $user['username'],
+            "email" => $user['email'],
+            "role" => $user['role']
+        ]);
+    } else {
+        echo json_encode(["success" => false, "message" => "Incorrect code."]);
+    }
+} else {
+    echo json_encode(["success" => false, "message" => "Email not found."]);
+}
+?>
