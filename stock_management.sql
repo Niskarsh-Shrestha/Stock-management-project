@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 27, 2025 at 05:21 AM
+-- Generation Time: Sep 01, 2025 at 12:39 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -49,6 +49,28 @@ INSERT INTO `categories` (`categoryID`, `categoryName`, `dateAdded`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `recipient` varchar(20) DEFAULT NULL,
+  `message` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `recipient`, `message`, `created_at`) VALUES
+(1, 'All', 'hi this is admin!', '2025-08-30 08:27:11'),
+(2, 'All', 'Attention all! this is an emergency call. please listen carefully.', '2025-08-30 08:44:18'),
+(3, 'All', 'this is very important notice! tomorrow is public holiday!', '2025-08-30 08:47:21');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `products`
 --
 
@@ -77,6 +99,26 @@ INSERT INTO `products` (`id`, `productName`, `quantity`, `availability`, `catego
 (9, 'samsunh note A23', 1, 'Yes', 'hello', 'h89', 'susank', '2025-07-24 22:33:28', 'manager', '2025-07-23 15:42:05'),
 (10, 'lenovo ideapad 5', 50, 'Yes', 'Scanner', 'h89', 'pawan', '2025-07-24 22:28:30', 'manager', '2025-07-24 10:00:52'),
 (12, 'plant', 123, 'Yes', 'australia', 'g67', 'ganesh', '2025-07-24 12:51:11', 'manager', '2025-07-24 12:51:11');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `roles`
+--
+
+CREATE TABLE `roles` (
+  `id` int(11) NOT NULL,
+  `role_name` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `roles`
+--
+
+INSERT INTO `roles` (`id`, `role_name`) VALUES
+(1, 'admin'),
+(3, 'employee'),
+(2, 'manager');
 
 -- --------------------------------------------------------
 
@@ -113,20 +155,26 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `role` enum('employee','manager') NOT NULL,
-  `password` text NOT NULL
+  `role` varchar(50) NOT NULL,
+  `password` text NOT NULL,
+  `reset_code` varchar(10) DEFAULT NULL,
+  `login_code` varchar(10) DEFAULT NULL,
+  `registration_code` varchar(10) DEFAULT NULL,
+  `is_verified` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `role`, `password`) VALUES
-(1, 'niskarsh', 'niskarshshrestha@gmail.com', 'manager', '$2y$10$.Vx0.Yfnoh.B4Y1.afMZDeainadD5Soz0OH1yDWJ9tCAKDpm9H.9K'),
-(2, 'aaa', 'aaa@gmail.com', 'employee', '$2y$10$yTWUc0ynsw74IFjBekbsvuJqifoVy7fjebzPIiraVNFvxQeznlI32'),
-(3, 'Anant', 'qwe@gmail.com', 'manager', '$2y$10$6w4yNH31NqPs96BtG4y/KeeQ5ieEY.tITKX8fDNvZ.sKwbB3urfgK'),
-(4, 'nishita', 'nnn@gmail.com', 'employee', '$2y$10$RvXtKKvpjmCKjCTyH/riTeo/xFP1MRNHfO/ov5XnlgnEZzd5INIfy'),
-(5, 'hellooo', 'hellooo@gmail.com', 'manager', '$2y$10$9ihoQndwfmzL.17VTG2qqeydxmwYBb6P9x07qB5dqSgyEXP4IHBv6');
+INSERT INTO `users` (`id`, `username`, `email`, `role`, `password`, `reset_code`, `login_code`, `registration_code`, `is_verified`) VALUES
+(1, 'niskarshaaaa', 'niskarshshrestha@gmail.com', 'manager', '$2y$10$yfyn893Mh92uNs9.hj/41uDfBS6k8J5QuZeKV4LJDleZQEbDuUAZO', '1570', NULL, NULL, 0),
+(4, 'nishita', 'nnn@gmail.com', 'employee', '$2y$10$RvXtKKvpjmCKjCTyH/riTeo/xFP1MRNHfO/ov5XnlgnEZzd5INIfy', NULL, '7540', NULL, 0),
+(5, 'hellooo', 'hellooo@gmail.com', 'manager', '$2y$10$9ihoQndwfmzL.17VTG2qqeydxmwYBb6P9x07qB5dqSgyEXP4IHBv6', NULL, NULL, NULL, 0),
+(7, 'ooo', 'ooo@gmail.com', 'employee', '$2y$10$EQ5gCTzVBDywK9RsHhWVkO5H99rNdB2ihZX1c4VfkjPaYA3I2HyL.', NULL, NULL, NULL, 0),
+(8, 'sydney', 'sydney', 'manager', '$2y$10$beKmfPx6o8GGSc4HM3HVuexN15wlMRF/kO3LGfV38X7Fcj.rNwy4W', NULL, NULL, NULL, 0),
+(14, 'nisku', 'niskarshshrestha.vu@gmail.com', 'employee', '$2y$10$G8BJ0WwbQMyjQhHNMlILEODE0/fMDplOprfpVStz1YIA3ex.e/DaW', NULL, NULL, NULL, 1),
+(21, 'zaynick', 'zaynick4@gmail.com', 'admin', '$2y$10$RaxJhBwRVEbx3rQvgvh8Q.dJk4AtYCH9DEGnBB1ttsslcBwlmpe4u', NULL, NULL, NULL, 1);
 
 --
 -- Indexes for dumped tables
@@ -139,10 +187,23 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`categoryID`);
 
 --
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `products`
 --
 ALTER TABLE `products`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `role_name` (`role_name`);
 
 --
 -- Indexes for table `suppliers`
@@ -169,10 +230,22 @@ ALTER TABLE `categories`
   MODIFY `categoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
@@ -184,7 +257,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Constraints for dumped tables
