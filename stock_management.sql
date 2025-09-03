@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 01, 2025 at 12:50 AM
+-- Generation Time: Sep 03, 2025 at 02:00 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -160,21 +160,18 @@ CREATE TABLE `users` (
   `reset_code` varchar(10) DEFAULT NULL,
   `login_code` varchar(10) DEFAULT NULL,
   `registration_code` varchar(10) DEFAULT NULL,
-  `is_verified` tinyint(1) DEFAULT 0
+  `is_verified` tinyint(1) DEFAULT 0,
+  `is_verified_email` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `role`, `password`, `reset_code`, `login_code`, `registration_code`, `is_verified`) VALUES
-(1, 'niskarshaaaa', 'niskarshshrestha@gmail.com', 'manager', '$2y$10$yfyn893Mh92uNs9.hj/41uDfBS6k8J5QuZeKV4LJDleZQEbDuUAZO', '1570', NULL, NULL, 0),
-(4, 'nishita', 'nnn@gmail.com', 'employee', '$2y$10$RvXtKKvpjmCKjCTyH/riTeo/xFP1MRNHfO/ov5XnlgnEZzd5INIfy', NULL, '7540', NULL, 0),
-(5, 'hellooo', 'hellooo@gmail.com', 'manager', '$2y$10$9ihoQndwfmzL.17VTG2qqeydxmwYBb6P9x07qB5dqSgyEXP4IHBv6', NULL, NULL, NULL, 0),
-(7, 'ooo', 'ooo@gmail.com', 'employee', '$2y$10$EQ5gCTzVBDywK9RsHhWVkO5H99rNdB2ihZX1c4VfkjPaYA3I2HyL.', NULL, NULL, NULL, 0),
-(8, 'sydney', 'sydney', 'manager', '$2y$10$beKmfPx6o8GGSc4HM3HVuexN15wlMRF/kO3LGfV38X7Fcj.rNwy4W', NULL, NULL, NULL, 0),
-(14, 'nisku', 'niskarshshrestha.vu@gmail.com', 'employee', '$2y$10$G8BJ0WwbQMyjQhHNMlILEODE0/fMDplOprfpVStz1YIA3ex.e/DaW', NULL, NULL, NULL, 1),
-(21, 'zaynick', 'zaynick4@gmail.com', 'admin', '$2y$10$RaxJhBwRVEbx3rQvgvh8Q.dJk4AtYCH9DEGnBB1ttsslcBwlmpe4u', NULL, NULL, NULL, 1);
+INSERT INTO `users` (`id`, `username`, `email`, `role`, `password`, `reset_code`, `login_code`, `registration_code`, `is_verified`, `is_verified_email`) VALUES
+(24, 'zaynick', 'zaynick4@gmail.com', 'admin', '$2y$10$hyfAj1cmP8eCSfSxT.xPtOuE88sx61UTWTuhfpPYydeH7ZlEDv7Aq', NULL, NULL, NULL, 1, 0),
+(35, 'niskarsh', 'niskarshshrestha@gmail.com', 'manager', '$2y$10$fWEUCODecNahmo8cvcVsLe9FH/jO43Sw1AF6/TYeCKVpIyUICFh7W', NULL, NULL, '9530', 1, 1),
+(50, 'sydney', 'niskarshshrestha.vu@gmail.com', 'admin', '$2y$10$nHyjF0.FYTrf5KTLfAZWSuDSO6AtSFcHe2tr8W3sM5m9/BP8JFsxO', NULL, NULL, '6818', 1, 1);
 
 --
 -- Indexes for dumped tables
@@ -257,7 +254,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- Constraints for dumped tables
