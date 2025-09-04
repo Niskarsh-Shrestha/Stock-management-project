@@ -5,6 +5,12 @@ ini_set('display_errors', 0);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 include 'db.php';
+include 'auth_check.php';
+
+if ($user_role !== 'admin' && $user_role !== 'manager') {
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+    exit;
+}
 
 $id = $_POST['CategoryID'];
 

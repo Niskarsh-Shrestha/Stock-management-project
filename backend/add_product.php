@@ -2,6 +2,12 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 require 'db.php';
+include 'auth_check.php';
+
+if ($user_role !== 'admin' && $user_role !== 'manager') {
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+    exit;
+}
 
 // Fetch POST data safely
 $productName = $_POST['productName'] ?? '';

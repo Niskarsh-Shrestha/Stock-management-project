@@ -5,6 +5,12 @@ ini_set('display_errors', 0);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 require 'db.php';
+include 'auth_check.php';
+
+if ($user_role !== 'admin' && $user_role !== 'manager') {
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $conn->prepare("DELETE FROM products WHERE id=?");

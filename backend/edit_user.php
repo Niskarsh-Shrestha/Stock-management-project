@@ -1,6 +1,12 @@
 <?php
 header("Content-Type: application/json");
 include 'db.php';
+include 'auth_check.php';
+
+if ($user_role !== 'admin' && $user_role !== 'manager') {
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+    exit;
+}
 
 $data = json_decode(file_get_contents("php://input"));
 $id = intval($data->id ?? 0);
