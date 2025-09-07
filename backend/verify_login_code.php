@@ -2,6 +2,8 @@
 header("Content-Type: application/json");
 include 'db.php';
 
+session_start();
+
 $data = json_decode(file_get_contents("php://input"));
 $email = trim($data->email ?? '');
 $code = trim($data->code ?? '');
@@ -26,11 +28,15 @@ if ($result->num_rows === 1) {
         $clear->execute();
 
         // Fetch user info
-        $userInfo = $conn->prepare("SELECT username, email, role FROM users WHERE email = ?");
+        $userInfo = $conn->prepare("SELECT id, username, email, role FROM users WHERE email = ?");
         $userInfo->bind_param("s", $email);
         $userInfo->execute();
         $userResult = $userInfo->get_result();
         $user = $userResult->fetch_assoc();
+
+        // Set session variables
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_role'] = $user['role'];
 
         echo json_encode([
             "success" => true,
