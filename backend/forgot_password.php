@@ -42,7 +42,7 @@ if ($result->num_rows === 1) {
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
-        $mail->setFrom('yourgmail@gmail.com', 'Stock Management App');
+        $mail->setFrom('niskarshshrestha@gmail.com', 'Stock Management App');
         $mail->addAddress($email);
 
         $mail->isHTML(true);

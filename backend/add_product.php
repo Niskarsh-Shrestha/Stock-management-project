@@ -29,14 +29,16 @@ if (
 $dateAdded = date("Y-m-d H:i:s");
 $lastUpdated = $dateAdded;
 
-$stmt = $conn->prepare("INSERT INTO products (productName, quantity, availability, category, warehouseLocation, supplierName, lastUpdated, modifiedBy, dateAdded) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO products (productName, quantity, availability, category, 
+warehouseLocation, supplierName, lastUpdated, modifiedBy, dateAdded) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 if (!$stmt) {
     echo json_encode(["error" => "Prepare failed: " . $conn->error]);
     exit;
 }
 
-$stmt->bind_param("sisssssss", $productName, $quantity, $availability, $category, $warehouseLocation, $supplierName, $lastUpdated, $modifiedBy, $dateAdded);
+$stmt->bind_param("sisssssss", $productName, $quantity, $availability, $category, 
+$warehouseLocation, $supplierName, $lastUpdated, $modifiedBy, $dateAdded);
 
 if ($stmt->execute()) {
     echo json_encode(["success" => true, "message" => "Product added successfully"]);
