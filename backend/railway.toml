@@ -1,0 +1,7 @@
+[build]
+builder = "NIXPACKS"
+
+[[services]]
+name  = "api"
+path  = "backend"                       # tell Railway to build only /backend
+start = "php -S 0.0.0.0:$PORT -t ."     # same as Procfile start
