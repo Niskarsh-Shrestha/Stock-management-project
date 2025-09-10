@@ -14,6 +14,10 @@ header("Content-Type: application/json; charset=UTF-8");
 // Include database connection
 require 'db.php';
 
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
+
 // Get data from POST request
 $supplierID = $_POST['SupplierID'] ?? '';
 $supplierName = $_POST['supplierName'] ?? '';

@@ -4,6 +4,7 @@ import 'product_list.dart';
 import 'category_list.dart';
 import 'supplier_list.dart';
 import 'dart:convert';
+import 'http_client.dart';
 import 'package:http/http.dart' as http;
 import 'manage_users_page.dart';
 import 'manage_roles_page.dart';
@@ -31,10 +32,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
   int _lowStockCount = 0;
   List<Map<String, dynamic>> _lowStockProducts = [];
   List<Map<String, dynamic>> _pendingRequests = [];
+  late final http.Client _client;
 
   @override
   void initState() {
     super.initState();
+    _client = createHttpClient();
     fetchUsers();
     fetchRoles();
     _fetchLowStockProducts();

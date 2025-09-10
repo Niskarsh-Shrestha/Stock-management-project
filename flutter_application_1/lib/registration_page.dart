@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'env.dart';
+import 'http_client.dart';
 
 final OutlineInputBorder roundedBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(12),
@@ -26,6 +27,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   List<Map<String, dynamic>> roles = [];
   String? selectedRole;
 
+  late final http.Client _client;
+
   Future<List<Map<String, dynamic>>> fetchRoles() async {
     final response = await http.get(
       Uri.parse('${Env.baseUrl}/get_roles.php'),
@@ -37,6 +40,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   void initState() {
     super.initState();
+    _client = createHttpClient();
     fetchRoles().then((roleList) {
       setState(() {
         roles = roleList;

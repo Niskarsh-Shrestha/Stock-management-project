@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'env.dart';
+import 'http_client.dart';
+
 class ProductListPage extends StatefulWidget {
   final bool isManager;
   const ProductListPage({Key? key, this.isManager = false}) : super(key: key);
@@ -31,9 +33,12 @@ class _ProductListPageState extends State<ProductListPage> {
   bool _isEditMode = false;
   dynamic _editingProduct;
 
+  late final http.Client _client;
+
   @override
   void initState() {
     super.initState();
+    _client = createHttpClient();
     _fetchAllData();
   }
 
@@ -161,9 +166,9 @@ class _ProductListPageState extends State<ProductListPage> {
     );
 
     if (confirm == true) {
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('${Env.baseUrl}/delete_product.php'),
-        body: {'id': productId},  // <-- Use 'id' here!
+        body: {'id': productId},
       );
       final decoded = jsonDecode(response.body);
       if (decoded['success'] == true) {

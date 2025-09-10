@@ -1,8 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'category_products_page.dart';
 import 'env.dart';
+
+http.Client createHttpClient() {
+  if (kIsWeb) {
+    // ignore: avoid_web_libraries_in_flutter
+    import 'package:http/browser_client.dart' show BrowserClient;
+    final c = BrowserClient()..withCredentials = true;
+    return c;
+  }
+  return http.Client();
+}
 
 class CategoryListPage extends StatefulWidget {
   final bool isManager;

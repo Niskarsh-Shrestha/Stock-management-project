@@ -1,6 +1,11 @@
 <?php
 header("Content-Type: application/json");
-include 'db.php';
+require_once __DIR__ . '/db.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
+
 include 'auth_check.php';
 
 $data = json_decode(file_get_contents("php://input"));

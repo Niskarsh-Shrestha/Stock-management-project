@@ -1,9 +1,23 @@
 <?php
-// CORS setup
-header("Access-Control-Allow-Origin: " . (getenv('CORS_ALLOW_ORIGIN') ?: '*'));
+// --- CORS & Preflight ---
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$allowedOrigin = getenv('CORS_ALLOW_ORIGIN') ?: 'https://stock-management-project.vercel.app';
+
+if ($origin && stripos($origin, parse_url($allowedOrigin, PHP_URL_HOST)) !== false) {
+  header("Access-Control-Allow-Origin: $origin");
+} else {
+  header("Access-Control-Allow-Origin: $allowedOrigin");
+}
+header("Vary: Origin");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Credentials: true");
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
+
+// --- Secure session cookie for cross-site ---
+ini_set('session.cookie_secure', '1');       // requires HTTPS
+ini_set('session.cookie_samesite', 'None');  // allow cross-site
+// ini_set('session.cookie_domain', '.yourdomain.com'); // if needed
 
 // Default values for local dev (public host/port)
 $defaultHost = 'metro.proxy.rlwy.net';

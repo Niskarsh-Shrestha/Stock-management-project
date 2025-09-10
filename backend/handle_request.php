@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json");
-include 'db.php';
+require_once __DIR__ . '/db.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -8,6 +8,10 @@ use PHPMailer\PHPMailer\Exception;
 require 'PHPMailer/src/Exception.php';
 require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
 
 $data = json_decode(file_get_contents("php://input"));
 $id = $data->id ?? 0;

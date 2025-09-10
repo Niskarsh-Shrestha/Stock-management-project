@@ -1,6 +1,11 @@
 <?php
 header("Content-Type: application/json");
-include 'db.php';
+require_once __DIR__ . '/db.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
+
 include 'auth_check.php';
 
 if ($user_role !== 'admin' && $user_role !== 'manager') {

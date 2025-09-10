@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'env.dart';
+import 'http_client.dart';
 
 class EmployeeProductListPage extends StatefulWidget {
   const EmployeeProductListPage({Key? key}) : super(key: key);
@@ -20,9 +21,12 @@ class _EmployeeProductListPageState extends State<EmployeeProductListPage> {
   String _sortBy = 'productName';
   bool _sortDescending = false;
 
+  late final http.Client _client;
+
   @override
   void initState() {
     super.initState();
+    _client = createHttpClient();
     _fetchAllData();
   }
 
@@ -166,6 +170,22 @@ class _EmployeeProductListPageState extends State<EmployeeProductListPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _deleteProduct(String productId) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('${Env.baseUrl}/delete_product.php'),
+        body: {'id': productId},
+      );
+      if (response.statusCode == 200) {
+        // Product deleted successfully, refetch the product list
+        _fetchProducts();
+      }
+    } catch (e) {
+      // Handle error
+      print('Error deleting product: $e');
+    }
   }
 
   @override

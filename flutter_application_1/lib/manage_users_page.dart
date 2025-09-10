@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'env.dart';
+import 'http_client.dart';
 
 class ManageUsersPage extends StatefulWidget {
   const ManageUsersPage({super.key});
@@ -13,10 +14,12 @@ class ManageUsersPage extends StatefulWidget {
 class _ManageUsersPageState extends State<ManageUsersPage> {
   List<dynamic> users = [];
   List<Map<String, dynamic>> roles = [];
+  late final http.Client _client;
 
   @override
   void initState() {
     super.initState();
+    _client = createHttpClient();
     fetchUsers();
     fetchRoles();
   }
@@ -224,10 +227,9 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
       ),
     );
     if (confirm == true) {
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('${Env.baseUrl}/delete_user.php'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'id': id}),
+        body: {'id': id},
       );
       final data = jsonDecode(response.body);
       ScaffoldMessenger.of(context).showSnackBar(

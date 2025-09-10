@@ -4,6 +4,10 @@ header("Content-Type: application/json");
 include 'db.php';
 include 'auth_check.php';
 
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
+
 $data = json_decode(file_get_contents("php://input"));
 $username = trim($data->username ?? '');
 $email = trim($data->email ?? '');

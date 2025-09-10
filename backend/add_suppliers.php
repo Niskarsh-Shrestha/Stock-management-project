@@ -30,3 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+require_once __DIR__ . '/db.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
+

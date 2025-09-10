@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'env.dart';
+import 'http_client.dart';
 
 class SupplierListPage extends StatefulWidget {
   final bool isManager;
@@ -19,9 +20,12 @@ class _SupplierListPageState extends State<SupplierListPage> {
   String sortBy = 'supplierName'; // or 'dateAdded'
   bool sortDescending = false;
 
+  late final http.Client _client;
+
   @override
   void initState() {
     super.initState();
+    _client = createHttpClient();
     fetchSuppliersAndCategories();
   }
 
@@ -62,7 +66,7 @@ class _SupplierListPageState extends State<SupplierListPage> {
 
   Future<void> deleteSupplier(String supplierId) async {
     final url = Uri.parse('${Env.baseUrl}/delete_suppliers.php');
-    final response = await http.post(url, body: {'SupplierID': supplierId});
+    final response = await _client.post(url, body: {'SupplierID': supplierId});
     if (!mounted) return;
 
     if (response.statusCode == 200) {

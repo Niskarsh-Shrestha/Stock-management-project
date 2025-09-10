@@ -4,6 +4,7 @@ import 'product_list.dart';
 import 'category_list.dart';
 import 'supplier_list.dart';
 import 'dart:convert';
+import 'http_client.dart' as http_client;
 import 'package:http/http.dart' as http;
 import 'env.dart';
 
@@ -28,9 +29,12 @@ class _ManagerHomePageState extends State<ManagerHomePage> {
   List<Map<String, dynamic>> _lowStockProducts = [];
   List<dynamic> notifications = [];
 
+  late final http.Client _client;
+
   @override
   void initState() {
     super.initState();
+    _client = http_client.createHttpClient();
     _fetchLowStockProducts();
     _fetchNotifications();
   }
@@ -137,6 +141,14 @@ class _ManagerHomePageState extends State<ManagerHomePage> {
         ],
       ),
     );
+  }
+
+  Future<void> _deleteProduct(String productId) async {
+    final response = await _client.post(
+      Uri.parse('${Env.baseUrl}/delete_product.php'),
+      body: {'id': productId},
+    );
+    // Handle response...
   }
 
   @override

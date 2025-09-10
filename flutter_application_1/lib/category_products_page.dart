@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'env.dart';
+import 'http_client.dart';
 
 class CategoryProductsPage extends StatefulWidget {
   final String categoryId;
@@ -20,10 +21,12 @@ class CategoryProductsPage extends StatefulWidget {
 class _CategoryProductsPageState extends State<CategoryProductsPage> {
   List<Map<String, dynamic>> products = [];
   bool isLoading = true;
+  late final http.Client _client;
 
   @override
   void initState() {
     super.initState();
+    _client = createHttpClient();
     fetchCategoryProducts();
   }
 
@@ -43,6 +46,21 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to load products')),
+      );
+    }
+  }
+
+  Future<void> deleteProduct(String productId) async {
+    final response = await _client.post(
+      Uri.parse('${Env.baseUrl}/delete_product.php'),
+      body: {'id': productId},
+    );
+
+    if (response.statusCode == 200) {
+      fetchCategoryProducts(); // Refresh the product list
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to delete product')),
       );
     }
   }

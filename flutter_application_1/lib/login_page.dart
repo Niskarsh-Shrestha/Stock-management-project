@@ -7,6 +7,7 @@ import 'employee_home_page.dart';
 import 'admin_home_page.dart';
 import 'data_analyst_home_page.dart';
 import 'env.dart';
+import 'http_client.dart';
 
 final OutlineInputBorder roundedBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(12),
@@ -33,9 +34,12 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
 
+  late final http.Client _client;
+
   @override
   void initState() {
     super.initState();
+    _client = createHttpClient();
     fetchRoles().then((roleList) {
       setState(() {
         roles = roleList;
@@ -317,10 +321,6 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
-
-
-
-    
   }
 
   Future<void> resendForgotCode(String emailOrUsername) async {
