@@ -7,9 +7,10 @@ require_once __DIR__ . '/db.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require __DIR__ . '/PHPMailer/src/Exception.php';
-require __DIR__ . '/PHPMailer/src/PHPMailer.php';
-require __DIR__ . '/PHPMailer/src/SMTP.php';
+require __DIR__ . '/backend/phpmailer/src/Exception.php';
+require __DIR__ . '/backend/phpmailer/src/PHPMailer.php';
+require __DIR__ . '/backend/phpmailer/src/SMTP.php';
+
 
 
 /** ---- 1) Read input: support JSON and x-www-form-urlencoded ---- */
