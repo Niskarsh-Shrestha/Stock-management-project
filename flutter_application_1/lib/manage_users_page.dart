@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'env.dart';
 import 'http_client.dart';
+import 'auth_headers.dart';
 
 class ManageUsersPage extends StatefulWidget {
   const ManageUsersPage({super.key});
@@ -229,6 +230,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
     if (confirm == true) {
       final response = await _client.post(
         Uri.parse('${Env.baseUrl}/delete_user.php'),
+        headers: AuthHeaders.value,
         body: {'id': id},
       );
       final data = jsonDecode(response.body);

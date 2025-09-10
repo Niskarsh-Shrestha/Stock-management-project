@@ -5,6 +5,7 @@ import 'package:http/browser_client.dart' show BrowserClient;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'category_products_page.dart';
 import 'env.dart';
+import 'auth_headers.dart';
 
 http.Client createHttpClient() {
   if (kIsWeb) {
@@ -125,10 +126,14 @@ class _CategoryListPageState extends State<CategoryListPage> {
               final url = Uri.parse('${Env.baseUrl}/${isEdit ? 'edit_category.php' : 'add_category.php'}');
 
               try {
-                final response = await http.post(url, body: {
-                  if (isEdit) 'CategoryID': category!['CategoryID'].toString(),
-                  'categoryName': name,
-                });
+                final response = await http.post(
+                  url,
+                  headers: AuthHeaders.value,
+                  body: {
+                    if (isEdit) 'CategoryID': category!['CategoryID'].toString(),
+                    'categoryName': name,
+                  },
+                );
 
                 if (!mounted) return;
                 Navigator.pop(context);
@@ -251,7 +256,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
     );
   }
 
-  Future<void> addEntity(Map<String, dynamic> payload) async {
+  Future<void> addCategory(Map<String, dynamic> payload) async {
     final resp = await _client.post(
       Uri.parse('${Env.baseUrl}/add_category.php'), // change entity as needed
       headers: {'Content-Type': 'application/json'},
@@ -261,7 +266,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
     // Handle response...
   }
 
-  Future<void> editEntity(Map<String, dynamic> payload) async {
+  Future<void> editCategory(Map<String, dynamic> payload) async {
     final resp = await _client.post(
       Uri.parse('${Env.baseUrl}/edit_category.php'), // change entity as needed
       headers: {'Content-Type': 'application/json'},
@@ -271,7 +276,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
     // Handle response...
   }
 
-  Future<void> deleteEntity(int id) async {
+  Future<void> deleteCategoryById(int id) async {
     final resp = await _client.post(
       Uri.parse('${Env.baseUrl}/delete_category.php'), // change entity as needed
       headers: {'Content-Type': 'application/json'},

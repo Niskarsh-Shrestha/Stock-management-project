@@ -36,16 +36,17 @@ if ($result->num_rows === 1) {
         $userResult = $userInfo->get_result();
         $user = $userResult->fetch_assoc();
 
-        // Set session variables
+        session_regenerate_id(true);
         $_SESSION['user_id']   = (int)$user['id'];
-        $_SESSION['user_role'] = strtolower($user['role']); // e.g. admin/manager/employee
+        $_SESSION['user_role'] = strtolower($user['role']);
 
         echo json_encode([
-            "success" => true,
-            "message" => "Login successful.",
-            "username" => $user['username'],
-            "email" => $user['email'],
-            "role" => $user['role']
+          "success"  => true,
+          "message"  => "Login successful.",
+          "username" => $user['username'],
+          "email"    => $user['email'],
+          "role"     => $_SESSION['user_role'],
+          "sid"      => session_id()
         ]);
     } else {
         echo json_encode(["success" => false, "message" => "Incorrect code."]);

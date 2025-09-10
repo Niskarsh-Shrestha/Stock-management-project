@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'env.dart';
 import 'http_client.dart';
+import 'auth_headers.dart';
 
 class SupplierListPage extends StatefulWidget {
   final bool isManager;
@@ -180,7 +181,11 @@ class _SupplierListPageState extends State<SupplierListPage> {
                     'email': emailController.text.trim(),
                     'lastOrderDate': selectedDate != null ? selectedDate!.toIso8601String().split('T').first : '',
                   };
-                  final response = await http.post(url, body: body);
+                  final response = await http.post(
+                    url,
+                    headers: AuthHeaders.value,
+                    body: body,
+                  );
                   if (!mounted) return;
                   Navigator.pop(context);
                   await fetchSuppliers();

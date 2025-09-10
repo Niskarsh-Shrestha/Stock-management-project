@@ -8,6 +8,7 @@ import 'admin_home_page.dart';
 import 'data_analyst_home_page.dart';
 import 'env.dart';
 import 'http_client.dart';
+import 'session.dart';
 
 final OutlineInputBorder roundedBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(12),
@@ -73,6 +74,8 @@ class _LoginPageState extends State<LoginPage> {
       final String username = data['username'];
       final String email = data['email'];
       final String role = data['role'];
+
+      Session.sid = data['sid'] as String?;
 
       if (role == 'manager') {
         Navigator.pushReplacement(
@@ -193,6 +196,8 @@ class _LoginPageState extends State<LoginPage> {
       final String username = data['username'];
       final String email = data['email'];
       final String role = data['role'];
+
+      Session.sid = data['sid'] as String?;
 
       if (role == 'admin') {
         Navigator.pushReplacement(

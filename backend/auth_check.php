@@ -1,14 +1,18 @@
 <?php
-require_once __DIR__ . '/db.php'; // sets CORS + cookie flags
+require_once __DIR__ . '/db.php';
+header('Content-Type: application/json');
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  session_start();
+$hdrSid = $_SERVER['HTTP_X_SESSION_ID'] ?? null;
+if ($hdrSid) {
+  if (session_status() === PHP_SESSION_ACTIVE) { session_write_close(); }
+  session_id($hdrSid);
 }
+if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
 
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
+if (empty($_SESSION['user_id']) || empty($_SESSION['user_role'])) {
   echo json_encode(['success' => false, 'message' => 'Unauthorized']);
   exit;
 }
 
 $user_id   = (int)$_SESSION['user_id'];
-$user_role = strtolower((string)$_SESSION['user_role']); // 'admin'|'manager'|'employee'
+$user_role = strtolower((string)$_SESSION['user_role']);

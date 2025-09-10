@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'env.dart';
 import 'http_client.dart';
+import 'auth_headers.dart';
 
 class ProductListPage extends StatefulWidget {
   final bool isManager;
@@ -135,8 +136,8 @@ class _ProductListPageState extends State<ProductListPage> {
     try {
       final response = await _client.post(
         url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(body),
+        headers: AuthHeaders.value,
+        body: body,
       );
       final decoded = jsonDecode(response.body);
       if (decoded['success'] == true) {
@@ -171,6 +172,7 @@ class _ProductListPageState extends State<ProductListPage> {
     if (confirm == true) {
       final response = await _client.post(
         Uri.parse('${Env.baseUrl}/delete_product.php'),
+        headers: AuthHeaders.value,
         body: {'id': productId},
       );
       final decoded = jsonDecode(response.body);

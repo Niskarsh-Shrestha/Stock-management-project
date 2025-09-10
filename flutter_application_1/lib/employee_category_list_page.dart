@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'env.dart';
 import 'http_client.dart';
+import 'auth_headers.dart';
 
 class EmployeeCategoryListPage extends StatefulWidget {
   const EmployeeCategoryListPage({Key? key}) : super(key: key);
@@ -129,6 +130,7 @@ class _EmployeeCategoryListPageState extends State<EmployeeCategoryListPage> {
     try {
       final response = await _client.post(
         Uri.parse('${Env.baseUrl}/delete_product.php'),
+        headers: AuthHeaders.value,
         body: {'id': productId},
       );
       if (response.statusCode == 200) {

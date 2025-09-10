@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'env.dart';
 import 'http_client.dart';
+import 'auth_headers.dart';
 
 class ManageRolesPage extends StatefulWidget {
   const ManageRolesPage({super.key});
@@ -138,6 +139,7 @@ class _ManageRolesPageState extends State<ManageRolesPage> {
     if (confirm == true) {
       final response = await _client.post(
         Uri.parse('${Env.baseUrl}/delete_role.php'),
+        headers: AuthHeaders.value,
         body: {'id': id},
       );
       final data = jsonDecode(response.body);
