@@ -134,7 +134,11 @@ class _ProductListPageState extends State<ProductListPage> {
     }
 
     try {
-      final response = await http.post(url, body: body);
+      final response = await _client.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
       final decoded = jsonDecode(response.body);
       if (decoded['success'] == true) {
         Navigator.pop(context);
