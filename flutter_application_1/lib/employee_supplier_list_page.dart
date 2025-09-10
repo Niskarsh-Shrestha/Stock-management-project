@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'env.dart';
 
 class EmployeeSupplierListPage extends StatefulWidget {
   const EmployeeSupplierListPage({Key? key}) : super(key: key);
@@ -25,7 +26,7 @@ class _EmployeeSupplierListPageState extends State<EmployeeSupplierListPage> {
   Future<void> _fetchSuppliers() async {
     setState(() => _isLoading = true);
     try {
-      final response = await http.get(Uri.parse('http://localhost/stock_management_project/backend/get_suppliers.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/get_suppliers.php'));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded['suppliers'] is List) {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'env.dart';
 
 class EmployeeCategoryListPage extends StatefulWidget {
   const EmployeeCategoryListPage({Key? key}) : super(key: key);
@@ -25,7 +26,7 @@ class _EmployeeCategoryListPageState extends State<EmployeeCategoryListPage> {
   Future<void> _fetchCategories() async {
     setState(() => _isLoading = true);
     try {
-      final response = await http.get(Uri.parse('http://localhost/stock_management_project/backend/get_categories.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/some_file.php'));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded['categories'] is List) {

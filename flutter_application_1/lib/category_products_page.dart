@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'env.dart';
 
 class CategoryProductsPage extends StatefulWidget {
   final String categoryId;
@@ -29,7 +30,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
   Future<void> fetchCategoryProducts() async {
     setState(() => isLoading = true);
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_products_by_category.php?categoryId=${widget.categoryId}'),
+      Uri.parse('${Env.baseUrl}/get_products_by_category.php?categoryId=${widget.categoryId}'),
     );
 
     if (response.statusCode == 200) {

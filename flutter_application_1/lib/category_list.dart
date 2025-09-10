@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'category_products_page.dart';
+import 'env.dart';
 
 class CategoryListPage extends StatefulWidget {
   final bool isManager;
@@ -30,7 +31,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
     });
 
     try {
-      final response = await http.get(Uri.parse('http://localhost/stock_management_project/backend/get_categories.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/get_categories.php'));
       if (!mounted) return;
 
       if (response.statusCode == 200) {
@@ -66,7 +67,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
   }
 
   Future<void> deleteCategory(String categoryId) async {
-    final url = Uri.parse('http://localhost/stock_management_project/backend/delete_category.php');
+    final url = Uri.parse('${Env.baseUrl}/delete_category.php');
     try {
       final response = await http.post(url, body: {'CategoryID': categoryId});
       if (!mounted) return;
@@ -108,7 +109,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
               }
 
               final isEdit = category != null;
-              final url = Uri.parse('http://localhost/stock_management_project/backend/${isEdit ? 'edit_category.php' : 'add_category.php'}');
+              final url = Uri.parse('${Env.baseUrl}/${isEdit ? 'edit_category.php' : 'add_category.php'}');
 
               try {
                 final response = await http.post(url, body: {

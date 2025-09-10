@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'manage_users_page.dart';
 import 'manage_roles_page.dart';
+import 'env.dart';
 
 class AdminHomePage extends StatefulWidget {
   final String username;
@@ -42,7 +43,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Future<void> fetchUsers() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_users.php'),
+      Uri.parse('${Env.baseUrl}/get_users.php'),
     );
     final data = jsonDecode(response.body);
     setState(() {
@@ -52,7 +53,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Future<void> fetchRoles() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_roles.php'),
+      Uri.parse('${Env.baseUrl}/get_roles.php'),
     );
     final data = jsonDecode(response.body);
     setState(() {
@@ -62,7 +63,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Future<void> _fetchLowStockProducts() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost/stock_management_project/backend/get_product.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/get_product.php'));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded['products'] is List) {
@@ -87,7 +88,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Future<void> _fetchPendingRequests() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_pending_requests.php'),
+      Uri.parse('${Env.baseUrl}/get_pending_requests.php'),
     );
     final data = jsonDecode(response.body);
     setState(() {
@@ -215,7 +216,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Future<void> _addUser(String username, String email, String password, String role) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/add_user.php'),
+      Uri.parse('${Env.baseUrl}/add_user.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'username': username,
@@ -233,7 +234,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Future<void> _addRole(String roleName) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/add_role.php'),
+      Uri.parse('${Env.baseUrl}/add_role.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'role': roleName}),
     );
@@ -279,7 +280,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
             onPressed: () async {
               Navigator.pop(context);
               final response = await http.post(
-                Uri.parse('http://localhost/stock_management_project/backend/edit_user.php'),
+                Uri.parse('${Env.baseUrl}/edit_user.php'),
                 headers: {'Content-Type': 'application/json'},
                 body: jsonEncode({
                   'id': user['id'],
@@ -315,7 +316,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     );
     if (confirm == true) {
       final response = await http.post(
-        Uri.parse('http://localhost/stock_management_project/backend/delete_user.php'),
+        Uri.parse('${Env.baseUrl}/delete_user.php'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'id': id}),
       );
@@ -340,7 +341,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
             onPressed: () async {
               Navigator.pop(context);
               final response = await http.post(
-                Uri.parse('http://localhost/stock_management_project/backend/edit_role.php'),
+                Uri.parse('${Env.baseUrl}/edit_role.php'),
                 headers: {'Content-Type': 'application/json'},
                 body: jsonEncode({'id': role['id'], 'role_name': roleController.text.trim()}),
               );
@@ -371,7 +372,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     );
     if (confirm == true) {
       final response = await http.post(
-        Uri.parse('http://localhost/stock_management_project/backend/delete_role.php'),
+        Uri.parse('${Env.baseUrl}/delete_role.php'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'id': id}),
       );
@@ -480,7 +481,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Future<void> _sendNotification(String recipient, String message) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/send_notification.php'),
+      Uri.parse('${Env.baseUrl}/send_notification.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'recipient': recipient,
@@ -573,7 +574,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
   Future<void> _handleRequest(int userId, bool approve, String email) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost/stock_management_project/backend/handle_request.php'),
+        Uri.parse('${Env.baseUrl}/handle_request.php'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'id': userId,

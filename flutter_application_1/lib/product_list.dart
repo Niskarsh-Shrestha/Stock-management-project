@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import 'env.dart';
 class ProductListPage extends StatefulWidget {
   final bool isManager;
   const ProductListPage({Key? key, this.isManager = false}) : super(key: key);
@@ -45,7 +45,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
   Future<void> _fetchProducts() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost/stock_management_project/backend/get_product.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/get_product.php'));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded != null && decoded['products'] is List) {
@@ -77,7 +77,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
   Future<void> _fetchCategories() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost/backend/get_categories.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/get_categories.php'));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded['categories'] is List) {
@@ -91,7 +91,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
   Future<void> _fetchSuppliers() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost/backend/get_suppliers.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/get_suppliers.php'));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded['suppliers'] is List) {
@@ -113,7 +113,7 @@ class _ProductListPageState extends State<ProductListPage> {
       return;
     }
 
-    final url = Uri.parse('http://localhost/backend/${_isEditMode ? 'edit_product.php' : 'add_product.php'}');
+    final url = Uri.parse('${Env.baseUrl}/${_isEditMode ? 'edit_product.php' : 'add_product.php'}');
     final body = {
       'productName': name,
       'quantity': qty.toString(),
@@ -162,7 +162,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
     if (confirm == true) {
       final response = await http.post(
-        Uri.parse('http://localhost/backend/delete_product.php'),
+        Uri.parse('${Env.baseUrl}/delete_product.php'),
         body: {'id': productId},  // <-- Use 'id' here!
       );
       final decoded = jsonDecode(response.body);

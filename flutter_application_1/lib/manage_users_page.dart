@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'env.dart';
 
 class ManageUsersPage extends StatefulWidget {
   const ManageUsersPage({super.key});
@@ -22,7 +23,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
 
   Future<void> fetchUsers() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_users.php'),
+      Uri.parse('${Env.baseUrl}/get_users.php'),
     );
     final data = jsonDecode(response.body);
     setState(() {
@@ -32,7 +33,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
 
   Future<void> fetchRoles() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_roles.php'),
+      Uri.parse('${Env.baseUrl}/get_roles.php'),
     );
     final data = jsonDecode(response.body);
     setState(() {
@@ -112,7 +113,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
 
   Future<void> _addUser(String username, String email, String password, String role) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/add_user.php'),
+      Uri.parse('${Env.baseUrl}/add_user.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'username': username,
@@ -194,7 +195,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
 
   Future<void> _editUser(int id, String username, String email, String role) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/edit_user.php'),
+      Uri.parse('${Env.baseUrl}/edit_user.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'id': id,
@@ -224,7 +225,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
     );
     if (confirm == true) {
       final response = await http.post(
-        Uri.parse('http://localhost/stock_management_project/backend/delete_user.php'),
+        Uri.parse('${Env.baseUrl}/delete_user.php'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'id': id}),
       );

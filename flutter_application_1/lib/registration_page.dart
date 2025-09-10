@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'env.dart';
 
 final OutlineInputBorder roundedBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(12),
@@ -27,7 +28,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   Future<List<Map<String, dynamic>>> fetchRoles() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_roles.php'),
+      Uri.parse('${Env.baseUrl}/get_roles.php'),
     );
     final data = jsonDecode(response.body);
     return List<Map<String, dynamic>>.from(data['roles']);
@@ -63,7 +64,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       return;
     }
 
-    final url = Uri.parse('http://localhost/stock_management_project/backend/register.php');
+    final url = Uri.parse('${Env.baseUrl}/register.php');
 
     final response = await http.post(
       url,
@@ -137,7 +138,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   Future<void> resendRegistrationCode(String email) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/resend_registration_code.php'),
+      Uri.parse('${Env.baseUrl}/resend_registration_code.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
     );
@@ -149,7 +150,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   Future<void> verifyRegistrationCode(String email, String code) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/verify_registration_code.php'),
+      Uri.parse('${Env.baseUrl}/verify_registration_code.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'code': code}),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'env.dart';
 
 class ManageRolesPage extends StatefulWidget {
   const ManageRolesPage({super.key});
@@ -21,7 +22,7 @@ class _ManageRolesPageState extends State<ManageRolesPage> {
 
   Future<void> fetchRoles() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_roles.php'),
+      Uri.parse('${Env.baseUrl}/get_roles.php'),
     );
     final data = jsonDecode(response.body);
     setState(() {
@@ -59,7 +60,7 @@ class _ManageRolesPageState extends State<ManageRolesPage> {
 
   Future<void> _addRole(String roleName) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/add_role.php'),
+      Uri.parse('${Env.baseUrl}/add_role.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'role': roleName}),
     );
@@ -108,7 +109,7 @@ class _ManageRolesPageState extends State<ManageRolesPage> {
 
   Future<void> _editRole(int id, String roleName) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/edit_role.php'),
+      Uri.parse('${Env.baseUrl}/edit_role.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'id': id, 'role_name': roleName}),
     );
@@ -133,7 +134,7 @@ class _ManageRolesPageState extends State<ManageRolesPage> {
     );
     if (confirm == true) {
       final response = await http.post(
-        Uri.parse('http://localhost/stock_management_project/backend/delete_role.php'),
+        Uri.parse('${Env.baseUrl}/delete_role.php'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'id': id}),
       );

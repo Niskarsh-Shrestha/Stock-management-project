@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'env.dart';
 
 class EmployeeProductListPage extends StatefulWidget {
   const EmployeeProductListPage({Key? key}) : super(key: key);
@@ -33,7 +34,7 @@ class _EmployeeProductListPageState extends State<EmployeeProductListPage> {
 
   Future<void> _fetchProducts() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost/stock_management_project/backend/get_product.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/get_product.php'));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded != null && decoded['products'] is List) {
@@ -65,7 +66,7 @@ class _EmployeeProductListPageState extends State<EmployeeProductListPage> {
 
   Future<void> _fetchCategories() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost/stock_management_project/backend/get_categories.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/get_categories.php'));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded['categories'] is List) {
@@ -79,7 +80,7 @@ class _EmployeeProductListPageState extends State<EmployeeProductListPage> {
 
   Future<void> _fetchSuppliers() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost/stock_management_project/backend/get_suppliers.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/get_suppliers.php'));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded['suppliers'] is List) {

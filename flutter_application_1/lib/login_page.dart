@@ -6,6 +6,7 @@ import 'manager_home_page.dart';
 import 'employee_home_page.dart';
 import 'admin_home_page.dart';
 import 'data_analyst_home_page.dart';
+import 'env.dart';
 
 final OutlineInputBorder roundedBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(12),
@@ -52,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/login.php'),
+      Uri.parse('${Env.baseUrl}/login.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'email': loginIdController.text.trim(),
@@ -164,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> resendLoginCode(String email) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/resend_login_code.php'),
+      Uri.parse('${Env.baseUrl}/resend_login_code.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
     );
@@ -176,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> verifyLoginCode(String email, String code) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/verify_login_code.php'),
+      Uri.parse('${Env.baseUrl}/verify_login_code.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'code': code}),
     );
@@ -277,7 +278,7 @@ class _LoginPageState extends State<LoginPage> {
       );
       return;
     }
-    final url = Uri.parse('http://localhost/stock_management_project/backend/forgot_password.php');
+    final url = Uri.parse('${Env.baseUrl}/forgot_password.php');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -321,7 +322,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> resendForgotCode(String email) async {
     final response = await http.post(
-      Uri.parse('http://localhost/stock_management_project/backend/resend_forgot_code.php'),
+      Uri.parse('${Env.baseUrl}/resend_forgot_code.php'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
     );
@@ -338,7 +339,7 @@ class _LoginPageState extends State<LoginPage> {
       );
       return;
     }
-    final url = Uri.parse('http://localhost/stock_management_project/backend/verify_code.php');
+    final url = Uri.parse('${Env.baseUrl}/verify_code.php');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -405,7 +406,7 @@ class _LoginPageState extends State<LoginPage> {
       );
       return;
     }
-    final url = Uri.parse('http://localhost/stock_management_project/backend/reset_password.php');
+    final url = Uri.parse('${Env.baseUrl}/reset_password.php');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -419,7 +420,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<List<String>> fetchRoles() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_roles.php'),
+      Uri.parse('${Env.baseUrl}/get_roles.php'),
     );
     final data = jsonDecode(response.body);
     final List<String> fetchedRoles = List<String>.from(data['roles'].map((role) => role['role_name'].toString()));

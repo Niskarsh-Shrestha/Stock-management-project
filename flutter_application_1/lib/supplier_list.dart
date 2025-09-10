@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'env.dart';
 
 class SupplierListPage extends StatefulWidget {
   final bool isManager;
@@ -31,7 +32,7 @@ class _SupplierListPageState extends State<SupplierListPage> {
   }
 
   Future<void> fetchSuppliers() async {
-    final response = await http.get(Uri.parse('http://localhost/stock_management_project/backend/get_suppliers.php'));
+    final response = await http.get(Uri.parse('${Env.baseUrl}/get_suppliers.php'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       setState(() {
@@ -42,7 +43,7 @@ class _SupplierListPageState extends State<SupplierListPage> {
   }
 
   Future<void> fetchCategories() async {
-    final response = await http.get(Uri.parse('http://localhost/stock_management_project/backend/get_categories.php'));
+    final response = await http.get(Uri.parse('${Env.baseUrl}/get_categories.php'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       setState(() {
@@ -60,7 +61,7 @@ class _SupplierListPageState extends State<SupplierListPage> {
   }
 
   Future<void> deleteSupplier(String supplierId) async {
-    final url = Uri.parse('http://localhost/stock_management_project/backend/delete_suppliers.php');
+    final url = Uri.parse('${Env.baseUrl}/delete_suppliers.php');
     final response = await http.post(url, body: {'SupplierID': supplierId});
     if (!mounted) return;
 
@@ -167,7 +168,7 @@ class _SupplierListPageState extends State<SupplierListPage> {
                     return;
                   }
                   final isEdit = supplier != null;
-                  final url = Uri.parse('http://localhost/stock_management_project/backend/${isEdit ? 'edit_suppliers.php' : 'add_suppliers.php'}');
+                  final url = Uri.parse('${Env.baseUrl}/${isEdit ? 'edit_suppliers.php' : 'add_suppliers.php'}');
                   final body = {
                     if (isEdit) 'SupplierID': supplier!['supplierID'].toString(),
                     'supplierName': nameController.text.trim(),

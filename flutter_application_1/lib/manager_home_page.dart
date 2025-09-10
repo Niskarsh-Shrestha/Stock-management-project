@@ -5,6 +5,7 @@ import 'category_list.dart';
 import 'supplier_list.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'env.dart';
 
 class ManagerHomePage extends StatefulWidget {
   final String username;
@@ -36,7 +37,7 @@ class _ManagerHomePageState extends State<ManagerHomePage> {
 
   Future<void> _fetchLowStockProducts() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost/stock_management_project/backend/get_product.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/get_product.php'));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded['products'] is List) {
@@ -61,7 +62,7 @@ class _ManagerHomePageState extends State<ManagerHomePage> {
 
   Future<void> _fetchNotifications() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_notifications.php?role=Managers'),
+      Uri.parse('${Env.baseUrl}/get_notifications.php?role=Managers'),
     );
     final data = jsonDecode(response.body);
     setState(() {

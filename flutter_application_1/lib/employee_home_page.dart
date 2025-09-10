@@ -6,6 +6,7 @@ import 'employee_supplier_list_page.dart';
 import 'employee_category_list_page.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'env.dart';
 
 class EmployeeHomePage extends StatelessWidget {
   final String username;
@@ -21,7 +22,7 @@ class EmployeeHomePage extends StatelessWidget {
 
   Future<List<dynamic>> _fetchNotifications() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_notifications.php?role=Employees'),
+      Uri.parse('${Env.baseUrl}/get_notifications.php?role=Employees'),
     );
     final data = jsonDecode(response.body);
     return data['notifications'] ?? [];
@@ -29,7 +30,7 @@ class EmployeeHomePage extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> _fetchLowStockProducts() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_product.php'),
+      Uri.parse('${Env.baseUrl}/get_product.php'),
     );
     final data = jsonDecode(response.body);
     if (data['products'] is List) {
