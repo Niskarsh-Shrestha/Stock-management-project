@@ -4,15 +4,6 @@ require_once __DIR__ . '/db.php';
 
 // CORS is already handled in db.php; keep this file lean.
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require __DIR__ . '/phpmailer/src/Exception.php';
-require __DIR__ . '/phpmailer/src/PHPMailer.php';
-require __DIR__ . '/phpmailer/src/SMTP.php';
-
-
-
 /** ---- 1) Read input: support JSON and x-www-form-urlencoded ---- */
 $raw = file_get_contents("php://input");
 $payload = json_decode($raw, true) ?: [];
@@ -55,32 +46,11 @@ $upd->bind_param("si", $login_code, $row['id']);
 $upd->execute();
 
 /** ---- 5) Send email via SMTP (env-driven) ---- */
-$mailStatus = "skipped";
-try {
-  $mail = new PHPMailer(true);
-  $mail->isSMTP();
-  $mail->Host       = getenv('SMTP_HOST') ?: 'smtp.gmail.com';
-  $mail->SMTPAuth   = true;
-  $mail->Username   = getenv('SMTP_USER') ?: '';             // your Gmail address
-  $mail->Password   = getenv('SMTP_PASS') ?: '';             // Gmail App Password (16 chars)
-  $mail->SMTPSecure = 'tls';
-  $mail->Port       = (int)(getenv('SMTP_PORT') ?: 587);
+require_once __DIR__ . '/mailer.php';
+$subject = 'Your Admin Login Code';
+$html    = "<p>Your 4-digit login code is: <b>{$login_code}</b></p>";
 
-  if (getenv('SMTP_DEBUG')) $mail->SMTPDebug = 2;
-
-  $fromEmail = getenv('SMTP_FROM_EMAIL') ?: ($mail->Username ?: 'no-reply@example.com');
-  $fromName  = getenv('SMTP_FROM_NAME')  ?: 'Admin';
-  $mail->setFrom($fromEmail, $fromName);
-  $mail->addAddress($row['email']); // always the user’s email
-
-  $mail->Subject = 'Your Admin Login Code';
-  $mail->Body    = "Your 4-digit login code is: {$login_code}";
-
-  $mail->send();
-  $mailStatus = "sent";
-} catch (Exception $e) {
-  $mailStatus = "error: " . $e->getMessage();
-}
+$mailStatus = send_email_api($row['email'], $subject, $html);
 
 /** ---- 6) Optional: return code in response for debugging only ---- */
 $debugIncludeCode = (bool)(getenv('DEBUG_RETURN_CODE') ?: false);
