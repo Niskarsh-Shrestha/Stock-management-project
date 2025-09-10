@@ -52,16 +52,15 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    final response = await http.post(
+    final user = loginIdController.text.trim();
+    final pass = passwordController.text;
+
+    final res = await http.post(
       Uri.parse('${Env.baseUrl}/login.php'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': loginIdController.text.trim(),
-        'username': loginIdController.text.trim(), // Send as both
-        'password': passwordController.text,
-      }),
+      body: jsonEncode({'username': user, 'password': pass}),
     );
-    final data = jsonDecode(response.body);
+    final data = jsonDecode(res.body);
 
     if (data['success'] == true && data['require_2fa'] == true) {
       show2FADialog(data['email']);
@@ -163,11 +162,11 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> resendLoginCode(String email) async {
+  Future<void> resendLoginCode(String emailOrUsername) async {
     final response = await http.post(
       Uri.parse('${Env.baseUrl}/resend_login_code.php'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email}),
+      body: jsonEncode({'email': emailOrUsername}), // or {'username': emailOrUsername}
     );
     final data = jsonDecode(response.body);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -318,17 +317,21 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
+
+
+
+    
   }
 
-  Future<void> resendForgotCode(String email) async {
+  Future<void> resendForgotCode(String emailOrUsername) async {
     final response = await http.post(
       Uri.parse('${Env.baseUrl}/resend_forgot_code.php'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email}),
+      body: jsonEncode({'email': emailOrUsername}), // or {'username': emailOrUsername}
     );
     final data = jsonDecode(response.body);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(data['message'] ?? 'Could not resend code')),
+      SnackBar(content: Text(data['message'] ?? 'Could not resend forgot code')),
     );
   }
 
