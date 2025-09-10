@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/browser_client.dart' show BrowserClient;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'category_products_page.dart';
 import 'env.dart';
@@ -8,7 +9,6 @@ import 'env.dart';
 http.Client createHttpClient() {
   if (kIsWeb) {
     // ignore: avoid_web_libraries_in_flutter
-    import 'package:http/browser_client.dart' show BrowserClient;
     final c = BrowserClient()..withCredentials = true;
     return c;
   }
@@ -24,6 +24,7 @@ class CategoryListPage extends StatefulWidget {
 }
 
 class _CategoryListPageState extends State<CategoryListPage> {
+  late final http.Client _client;
   List<Map<String, dynamic>> categories = [];
   bool isLoading = true;
 
@@ -33,6 +34,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
   @override
   void initState() {
     super.initState();
+    _client = createHttpClient();
     fetchCategories();
   }
 
@@ -42,7 +44,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
     });
 
     try {
-      final response = await http.get(Uri.parse('${Env.baseUrl}/get_categories.php'));
+      final response = await _client.get(Uri.parse('${Env.baseUrl}/get_categories.php'));
       if (!mounted) return;
 
       if (response.statusCode == 200) {
@@ -247,6 +249,36 @@ class _CategoryListPageState extends State<CategoryListPage> {
         ],
       ),
     );
+  }
+
+  Future<void> addEntity(Map<String, dynamic> payload) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/add_category.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(payload),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
+  Future<void> editEntity(Map<String, dynamic> payload) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/edit_category.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(payload),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
+  Future<void> deleteEntity(int id) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/delete_category.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'id': id}),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
   }
 
   @override

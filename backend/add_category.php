@@ -5,35 +5,27 @@ ini_set('display_errors', 0);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth_check.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  session_start();
+if (!in_array($user_role, ['admin','manager'], true)) {
+  echo json_encode(['success'=>false,'message'=>'Unauthorized']); exit;
 }
 
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
-  echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-  exit;
+$raw  = file_get_contents('php://input');
+$data = json_decode($raw, true);
+if (!is_array($data)) $data = $_POST;
+
+$categoryName = trim($data['categoryName'] ?? '');
+if ($categoryName === '') {
+  echo json_encode(['success'=>false,'message'=>'Validation failed']); exit;
 }
 
-// Optionally, check for admin/manager role:
-if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
-  echo json_encode(['success' => false, 'message' => 'Insufficient permissions']);
-  exit;
-}
+$sql = "INSERT INTO categories (categoryName) VALUES (?)";
+$stmt = $conn->prepare($sql);
+if (!$stmt) { echo json_encode(['success'=>false,'message'=>$conn->error]); exit; }
 
-$name = $_POST['categoryName'];
+$stmt->bind_param('s', $categoryName);
 
-$query = "INSERT INTO categories (CategoryName, dateAdded) VALUES (?, NOW())";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("s", $name);
-
-if ($stmt->execute()) {
-    echo "Category added successfully";
-} else {
-    echo "Failed to add category";
-}
-
-$payload = json_decode(file_get_contents("php://input"), true) ?: [];
-$id = $_POST['id'] ?? $payload['id'] ?? null;
-// For add/edit: get other fields similarly
+if (!$stmt->execute()) { echo json_encode(['success'=>false,'message'=>$stmt->error]); exit; }
+echo json_encode(['success'=>true, 'id'=>$stmt->insert_id]);
 

@@ -5,33 +5,28 @@ ini_set('display_errors', 0);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth_check.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  session_start();
+if (!in_array($user_role, ['admin','manager'], true)) {
+  echo json_encode(['success'=>false,'message'=>'Unauthorized']); exit;
 }
 
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
-  echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-  exit;
+$raw  = file_get_contents('php://input');
+$data = json_decode($raw, true);
+if (!is_array($data)) $data = $_POST;
+
+$id = (int)($data['id'] ?? 0);
+$categoryName = trim($data['categoryName'] ?? '');
+if ($id <= 0 || $categoryName === '') {
+  echo json_encode(['success'=>false,'message'=>'Validation failed']); exit;
 }
 
-// Optionally, check for admin/manager role:
-if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
-  echo json_encode(['success' => false, 'message' => 'Insufficient permissions']);
-  exit;
-}
+$sql = "UPDATE categories SET categoryName=? WHERE id=?";
+$stmt = $conn->prepare($sql);
+if (!$stmt) { echo json_encode(['success'=>false,'message'=>$conn->error]); exit; }
 
-$payload = json_decode(file_get_contents("php://input"), true) ?: [];
-$id = $_POST['id'] ?? $payload['id'] ?? null;
-$name = $_POST['categoryName'] ?? $payload['categoryName'] ?? null;
+$stmt->bind_param('si', $categoryName, $id);
 
-$query = "UPDATE categories SET CategoryName=? WHERE CategoryID=?";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("si", $name, $id);
-
-if ($stmt->execute()) {
-    echo "Category updated successfully";
-} else {
-    echo "Failed to update category";
-}
+if (!$stmt->execute()) { echo json_encode(['success'=>false,'message'=>$stmt->error]); exit; }
+echo json_encode(['success'=>true]);
 

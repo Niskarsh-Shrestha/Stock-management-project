@@ -239,6 +239,36 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
     }
   }
 
+  Future<void> addUser(Map<String, dynamic> payload) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/add_user.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(payload),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
+  Future<void> editUser(Map<String, dynamic> payload) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/edit_user.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(payload),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
+  Future<void> deleteUser(int id) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/delete_user.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'id': id}),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -37,8 +37,8 @@ if ($result->num_rows === 1) {
         $user = $userResult->fetch_assoc();
 
         // Set session variables
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_role'] = $user['role'];
+        $_SESSION['user_id']   = (int)$user['id'];
+        $_SESSION['user_role'] = strtolower($user['role']); // e.g. admin/manager/employee
 
         echo json_encode([
             "success" => true,

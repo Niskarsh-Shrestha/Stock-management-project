@@ -5,32 +5,23 @@ ini_set('display_errors', 0);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth_check.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  session_start();
+if (!in_array($user_role, ['admin','manager'], true)) {
+  echo json_encode(['success'=>false,'message'=>'Unauthorized']); exit;
 }
 
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
-  echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-  exit;
-}
+$raw  = file_get_contents('php://input');
+$data = json_decode($raw, true);
+if (!is_array($data)) $data = $_POST;
 
-// Optionally, check for admin/manager role:
-if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
-  echo json_encode(['success' => false, 'message' => 'Insufficient permissions']);
-  exit;
-}
+$id = (int)($data['id'] ?? 0);
+if ($id <= 0) { echo json_encode(['success'=>false,'message'=>'Invalid id']); exit; }
 
-$payload = json_decode(file_get_contents("php://input"), true) ?: [];
-$id = $_POST['id'] ?? $payload['id'] ?? null;
+$stmt = $conn->prepare("DELETE FROM categories WHERE id=?");
+if (!$stmt) { echo json_encode(['success'=>false,'message'=>$conn->error]); exit; }
 
-$query = "DELETE FROM categories WHERE CategoryID=?";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("i", $id);
-
-if ($stmt->execute()) {
-    echo "Category deleted successfully";
-} else {
-    echo "Failed to delete category";
-}
+$stmt->bind_param('i', $id);
+if (!$stmt->execute()) { echo json_encode(['success'=>false,'message'=>$stmt->error]); exit; }
+echo json_encode(['success'=>true]);
 

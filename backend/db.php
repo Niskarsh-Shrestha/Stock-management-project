@@ -1,7 +1,7 @@
 <?php
-// --- CORS & Preflight ---
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+// ===== CORS (must reflect your site; NOT "*") =====
 $allowedOrigin = getenv('CORS_ALLOW_ORIGIN') ?: 'https://stock-management-project.vercel.app';
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 if ($origin && stripos($origin, parse_url($allowedOrigin, PHP_URL_HOST)) !== false) {
   header("Access-Control-Allow-Origin: $origin");
@@ -14,33 +14,39 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Credentials: true");
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 
-// --- Secure session cookie for cross-site ---
-ini_set('session.cookie_secure', '1');       // requires HTTPS
-ini_set('session.cookie_samesite', 'None');  // allow cross-site
-// ini_set('session.cookie_domain', '.yourdomain.com'); // if needed
+header('Content-Type: application/json');
 
-// Default values for local dev (public host/port)
-$defaultHost = 'metro.proxy.rlwy.net';
-$defaultPort = 41275;
-$defaultUser = 'root';
-$defaultPass = 'MleCpOFlqfNlXYmBRGbktfaMkmwCsCjY';
-$defaultDB   = 'railway';
-
-// Use environment variables if set (Railway internal)
-$host = getenv('DB_HOST') ?: $defaultHost;
-$port = getenv('DB_PORT') ?: $defaultPort;
-$user = getenv('DB_USER') ?: $defaultUser;
-$pass = getenv('DB_PASS') ?: $defaultPass;
-$name = getenv('DB_NAME') ?: $defaultDB;
-
-// Connect
-$conn = new mysqli($host, $user, $pass, $name, $port);
-
-if ($conn->connect_error) {
-    http_response_code(500);
-    echo json_encode(["success" => false, "message" => "Database connection failed"]);
-    exit;
+// ===== Session cookie flags for cross-site =====
+if (PHP_VERSION_ID >= 70300) {
+  session_set_cookie_params([
+    'lifetime' => 0,
+    'path'     => '/',
+    'domain'   => '',
+    'secure'   => true,
+    'httponly' => true,
+    'samesite' => 'None',
+  ]);
+} else {
+  ini_set('session.cookie_secure', '1');
+  ini_set('session.cookie_httponly', '1');
+  ini_set('session.cookie_samesite', 'None');
+}
+if (!ini_get('session.save_path')) {
+  @session_save_path(sys_get_temp_dir());
 }
 
+// ===== DB connect (your current defaults preserved) =====
+$host = getenv('DB_HOST') ?: 'metro.proxy.rlwy.net';
+$port = (int)(getenv('DB_PORT') ?: 41275);
+$user = getenv('DB_USER') ?: 'root';
+$pass = getenv('DB_PASS') ?: 'MleCpOFlqfNlXYmBRGbktfaMkmwCsCjY';
+$name = getenv('DB_NAME') ?: 'railway';
+
+$conn = new mysqli($host, $user, $pass, $name, $port);
+if ($conn->connect_error) {
+  http_response_code(500);
+  echo json_encode(["success" => false, "message" => "Database connection failed"]);
+  exit;
+}
 $conn->set_charset('utf8mb4');
 ?>

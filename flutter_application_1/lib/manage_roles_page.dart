@@ -148,6 +148,36 @@ class _ManageRolesPageState extends State<ManageRolesPage> {
     }
   }
 
+  Future<void> addRole(Map<String, dynamic> payload) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/add_roles.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(payload),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
+  Future<void> editRoles(Map<String, dynamic> payload) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/edit_roles.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(payload),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
+  Future<void> deleteRole(int id) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/delete_roles.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'id': id}),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

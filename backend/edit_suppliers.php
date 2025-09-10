@@ -1,6 +1,7 @@
 <?php
 header("Content-Type: application/json");
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth_check.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();

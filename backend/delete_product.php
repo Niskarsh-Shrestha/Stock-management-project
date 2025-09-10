@@ -1,35 +1,22 @@
 <?php
 require_once __DIR__ . '/db.php';
-if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+require_once __DIR__ . '/auth_check.php';
 
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
-  echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-  exit;
+if (!in_array($user_role, ['admin','manager'], true)) {
+  echo json_encode(['success'=>false,'message'=>'Unauthorized']); exit;
 }
 
-// Optionally, check for admin/manager role:
-if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
-  echo json_encode(['success' => false, 'message' => 'Insufficient permissions']);
-  exit;
-}
+$raw  = file_get_contents('php://input');
+$data = json_decode($raw, true);
+if (!is_array($data)) $data = $_POST;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Support both form-data and JSON
-    $payload = json_decode(file_get_contents("php://input"), true) ?: [];
-    $id = $_POST['id'] ?? $payload['id'] ?? null;
+$id = (int)($data['id'] ?? 0);
+if ($id <= 0) { echo json_encode(['success'=>false,'message'=>'Invalid id']); exit; }
 
-    if (!$id) {
-        echo json_encode(["success" => false, "message" => "Product ID required"]);
-        exit;
-    }
+$stmt = $conn->prepare("DELETE FROM products WHERE id=?");
+if (!$stmt) { echo json_encode(['success'=>false,'message'=>$conn->error]); exit; }
 
-    $stmt = $conn->prepare("DELETE FROM products WHERE id=?");
-    $stmt->bind_param("i", $id);
-    if ($stmt->execute()) {
-        echo json_encode(["success" => true]);
-    } else {
-        echo json_encode(["success" => false, "error" => $stmt->error]);
-    }
-    $stmt->close();
-}
+$stmt->bind_param('i', $id);
+if (!$stmt->execute()) { echo json_encode(['success'=>false,'message'=>$stmt->error]); exit; }
+echo json_encode(['success'=>true]);
 ?>

@@ -26,7 +26,6 @@ class _SupplierListPageState extends State<SupplierListPage> {
   void initState() {
     super.initState();
     _client = createHttpClient();
-    fetchSuppliersAndCategories();
   }
 
   Future<void> fetchSuppliersAndCategories() async {
@@ -286,6 +285,36 @@ class _SupplierListPageState extends State<SupplierListPage> {
         ],
       ),
     );
+  }
+
+  Future<void> addSuppliers(Map<String, dynamic> payload) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/add_suppliers.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(payload),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
+  Future<void> editSuppliers(Map<String, dynamic> payload) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/edit_suppliers.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(payload),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
+  Future<void> deleteSuppliers(int id) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/delete_suppliers.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'id': id}),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
   }
 
   @override

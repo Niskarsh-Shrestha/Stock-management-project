@@ -5,34 +5,23 @@ ini_set('display_errors', 0);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 require_once __DIR__ . '/db.php';
-if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+require_once __DIR__ . '/auth_check.php';
 
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
-  echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-  exit;
+if (!in_array($user_role, ['admin','manager'], true)) {
+  echo json_encode(['success'=>false,'message'=>'Unauthorized']); exit;
 }
 
-// Optionally, check for admin/manager role:
-if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
-  echo json_encode(['success' => false, 'message' => 'Insufficient permissions']);
-  exit;
-}
+$raw  = file_get_contents('php://input');
+$data = json_decode($raw, true);
+if (!is_array($data)) $data = $_POST;
 
-$payload = json_decode(file_get_contents("php://input"), true) ?: [];
-$id = $_POST['id'] ?? $payload['id'] ?? null;
+$id = (int)($data['id'] ?? 0);
+if ($id <= 0) { echo json_encode(['success'=>false,'message'=>'Invalid id']); exit; }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['SupplierID'])) {
-    $supplierID = $_POST['SupplierID'];
+$stmt = $conn->prepare("DELETE FROM suppliers WHERE id=?");
+if (!$stmt) { echo json_encode(['success'=>false,'message'=>$conn->error]); exit; }
 
-    $stmt = $conn->prepare("DELETE FROM suppliers WHERE supplierID = ?");
-    $stmt->bind_param("i", $supplierID);
-
-    if ($stmt->execute()) {
-        echo json_encode(["success" => true]);
-    } else {
-        echo json_encode(["success" => false, "message" => $stmt->error]);
-    }
-} else {
-    echo json_encode(["success" => false, "message" => "SupplierID is missing."]);
-}
+$stmt->bind_param('i', $id);
+if (!$stmt->execute()) { echo json_encode(['success'=>false,'message'=>$stmt->error]); exit; }
+echo json_encode(['success'=>true]);
 

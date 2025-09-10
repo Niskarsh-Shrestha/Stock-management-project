@@ -39,7 +39,6 @@ class _ProductListPageState extends State<ProductListPage> {
   void initState() {
     super.initState();
     _client = createHttpClient();
-    _fetchAllData();
   }
 
   Future<void> _fetchAllData() async {
@@ -365,5 +364,35 @@ class _ProductListPageState extends State<ProductListPage> {
               ],
             ),
     );
+  }
+
+  Future<void> addProduct(Map<String, dynamic> payload) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/add_product.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(payload),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
+  Future<void> editProduct(Map<String, dynamic> payload) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/edit_product.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(payload),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
+  }
+
+  Future<void> deleteProduct(int id) async {
+    final resp = await _client.post(
+      Uri.parse('${Env.baseUrl}/delete_product.php'), // change entity as needed
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'id': id}),
+    );
+    final data = jsonDecode(resp.body);
+    // Handle response...
   }
 }
