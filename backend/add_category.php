@@ -10,11 +10,15 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();
 }
 
-include 'auth_check.php';
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
+  echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+  exit;
+}
 
-if ($user_role !== 'admin' && $user_role !== 'manager') {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
+// Optionally, check for admin/manager role:
+if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
+  echo json_encode(['success' => false, 'message' => 'Insufficient permissions']);
+  exit;
 }
 
 $name = $_POST['categoryName'];
@@ -28,4 +32,8 @@ if ($stmt->execute()) {
 } else {
     echo "Failed to add category";
 }
+
+$payload = json_decode(file_get_contents("php://input"), true) ?: [];
+$id = $_POST['id'] ?? $payload['id'] ?? null;
+// For add/edit: get other fields similarly
 

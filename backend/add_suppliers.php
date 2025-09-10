@@ -7,10 +7,22 @@ header("Content-Type: application/json");
 include 'db.php';
 include 'auth_check.php';
 
-if ($user_role !== 'admin' && $user_role !== 'manager') {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
+require_once __DIR__ . '/db.php';
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
+  echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+  exit;
 }
+
+// Optionally, check for admin/manager role:
+if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
+  echo json_encode(['success' => false, 'message' => 'Insufficient permissions']);
+  exit;
+}
+
+$payload = json_decode(file_get_contents("php://input"), true) ?: [];
+$id = $_POST['id'] ?? $payload['id'] ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['supplierName'];
@@ -28,11 +40,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         echo json_encode(["success" => false, "message" => $stmt->error]);
     }
-}
-
-require_once __DIR__ . '/db.php';
-
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  session_start();
 }
 

@@ -10,14 +10,19 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();
 }
 
-include 'auth_check.php';
-
-if ($user_role !== 'admin' && $user_role !== 'manager') {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
+  echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+  exit;
 }
 
-$id = $_POST['CategoryID'];
+// Optionally, check for admin/manager role:
+if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
+  echo json_encode(['success' => false, 'message' => 'Insufficient permissions']);
+  exit;
+}
+
+$payload = json_decode(file_get_contents("php://input"), true) ?: [];
+$id = $_POST['id'] ?? $payload['id'] ?? null;
 
 $query = "DELETE FROM categories WHERE CategoryID=?";
 $stmt = $conn->prepare($query);

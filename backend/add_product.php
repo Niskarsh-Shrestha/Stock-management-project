@@ -2,12 +2,20 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 require 'db.php';
-include 'auth_check.php';
+require_once __DIR__ . '/db.php';
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-if ($user_role !== 'admin' && $user_role !== 'manager') {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
+  echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+  exit;
 }
+
+// Optionally, check for admin/manager role:
+if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
+  echo json_encode(['success' => false, 'message' => 'Insufficient permissions']);
+  exit;
+}
+
 
 // Fetch POST data safely
 $productName = $_POST['productName'] ?? '';
@@ -17,6 +25,9 @@ $category = $_POST['category'] ?? '';
 $warehouseLocation = $_POST['warehouseLocation'] ?? '';
 $supplierName = $_POST['supplierName'] ?? '';
 $modifiedBy = $_POST['modifiedBy'] ?? '';
+
+$payload = json_decode(file_get_contents("php://input"), true) ?: [];
+$id = $_POST['id'] ?? $payload['id'] ?? null;
 
 if (
     empty($productName) || empty($quantity) || empty($availability) ||
