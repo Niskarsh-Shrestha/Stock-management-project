@@ -1,5 +1,9 @@
 {
-  "name": "stock-management-project",
-  "description": "Backend API for Stock Management System",
-  "require": {}
+  "name": "stockmgmt/api",
+  "type": "project",
+  "description": "PHP API for Stock Management",
+  "license": "MIT",
+  "require": {},
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }
