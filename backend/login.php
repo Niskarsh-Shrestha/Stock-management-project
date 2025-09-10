@@ -7,9 +7,9 @@ require_once __DIR__ . '/db.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require __DIR__ . '/backend/phpmailer/src/Exception.php';
-require __DIR__ . '/backend/phpmailer/src/PHPMailer.php';
-require __DIR__ . '/backend/phpmailer/src/SMTP.php';
+require __DIR__ . '/phpmailer/src/Exception.php';
+require __DIR__ . '/phpmailer/src/PHPMailer.php';
+require __DIR__ . '/phpmailer/src/SMTP.php';
 
 
 
