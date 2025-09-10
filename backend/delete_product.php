@@ -7,9 +7,18 @@ header("Content-Type: application/json");
 require 'db.php';
 include 'auth_check.php';
 
-if ($user_role !== 'admin' && $user_role !== 'manager') {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
+require_once __DIR__ . '/db.php';
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
+  echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+  exit;
+}
+
+// Optionally, check for admin/manager role:
+if ($_SESSION['user_role'] !== 'admin' && $_SESSION['user_role'] !== 'manager') {
+  echo json_encode(['success' => false, 'message' => 'Insufficient permissions']);
+  exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
