@@ -11,6 +11,13 @@ header("Content-Type: application/json");
 // Always include DB first!
 require 'db.php';
 
+// Count existing users
+$userCount = $conn->query("SELECT COUNT(*) FROM users")->fetch_row()[0];
+
+$is_verified = 0;
+$is_verified_email = 0;
+$is_approved = ($userCount == 0 && strtolower($role) == 'admin') ? 1 : 0;
+
 // Read JSON payload
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -30,9 +37,6 @@ $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
 // Generate a 4-digit verification code
 $registration_code = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
-$is_verified = 0;
-$is_verified_email = 0;
-$is_approved = ($userCount == 0 && strtolower($role) == 'admin') ? 1 : 0;
 
 // Insert user into database
 $stmt = $conn->prepare("INSERT INTO users (username, email, password, role, is_verified, is_verified_email, is_approved, registration_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
