@@ -10,6 +10,7 @@ $payload = json_decode($raw, true) ?: [];
 
 $input    = $_POST['email']    ?? $_POST['username'] ?? $payload['email']    ?? $payload['username'] ?? '';
 $password = $_POST['password'] ?? $payload['password'] ?? '';
+$role     = $payload['role']     ?? ''; // <-- Read role from request
 
 
 if ($input === '' || $password === '') {

@@ -63,7 +63,11 @@ class _LoginPageState extends State<LoginPage> {
     final res = await http.post(
       Uri.parse('${Env.baseUrl}/login.php'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'username': user, 'password': pass}),
+      body: jsonEncode({
+        'username': user,
+        'password': pass,
+        'role': selectedRole, // <-- add this line
+      }),
     );
     final data = jsonDecode(res.body);
 
