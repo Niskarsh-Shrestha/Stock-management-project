@@ -28,7 +28,7 @@ if (!$username || !$email || !$password || !$role) {
 // Hash password
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-// Always generate a registration code
+// Generate a 4-digit verification code
 $registration_code = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
 $is_verified = 0;
 $is_approved = 0;
@@ -55,8 +55,8 @@ if ($adminCount == 0 && strtolower($role) != 'admin') {
 $is_approved = ($userCount == 0 && strtolower($role) == 'admin') ? 1 : 0;
 
 // Insert user into database
-$stmt = $conn->prepare("INSERT INTO users (username, email, password, role, is_approved) VALUES (?, ?, ?, ?, ?)");
-$stmt->bind_param("ssssi", $username, $email, $hashedPassword, $role, $is_approved);
+$stmt = $conn->prepare("INSERT INTO users (username, email, password, role, is_approved, registration_code) VALUES (?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("ssssss", $username, $email, $hashedPassword, $role, $is_approved, $registration_code);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Registration successful.']);
