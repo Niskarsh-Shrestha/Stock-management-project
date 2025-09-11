@@ -40,16 +40,27 @@ class _AdminHomePageState extends State<AdminHomePage> {
         setState(() {
           pendingRequests = data['pending_requests'];
         });
+        print('Pending requests count: ${pendingRequests.length}');
+        print('First pending request: ${pendingRequests.isNotEmpty ? pendingRequests[0] : "None"}');
       }
     } else {
       print('Failed to fetch pending requests');
     }
+    print(pendingRequests.runtimeType); // Should be List
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Admin Home')),
+      appBar: AppBar(
+        title: Text('Admin Home'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: fetchPendingRequests,
+          ),
+        ],
+      ),
       body: pendingRequests.isEmpty
           ? Center(child: Text('No pending approval requests'))
           : ListView.builder(
