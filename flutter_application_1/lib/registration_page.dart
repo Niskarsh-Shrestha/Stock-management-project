@@ -70,7 +70,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
     final url = Uri.parse('${Env.baseUrl}/register.php');
 
-    final response = await http.post(
+    final response = await _client.post( // <-- use _client here
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
@@ -87,7 +87,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'] ?? 'Registration successful. Wait for admin approval.')),
         );
-        showRegistrationCodeDialog(emailController.text.trim()); // <-- Add this line
+        showRegistrationCodeDialog(emailController.text.trim());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'] ?? 'Registration failed')),
