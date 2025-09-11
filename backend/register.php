@@ -8,6 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 header("Content-Type: application/json");
 
+// Always include DB first!
+require 'db.php';
+
 // Read JSON payload
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -80,7 +83,6 @@ if ($http_code !== 200 && $http_code !== 202) {
 }
 
 // Insert user into database
-require 'db.php';
 $stmt = $conn->prepare("INSERT INTO users (username, email, password, role, is_verified, registration_code, is_approved) VALUES (?, ?, ?, ?, ?, ?, ?)");
 $stmt->bind_param("ssssisi", $username, $email, $hashedPassword, $role, $is_verified, $registration_code, $is_approved);
 
