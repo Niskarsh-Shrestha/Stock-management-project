@@ -32,11 +32,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
     final response = await http.get(
       Uri.parse('${Env.baseUrl}/get_pending_requests.php'),
     );
-    print('API response: ${response.body}'); // <-- Debug print
+    print(response.body);
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print('Decoded data: $data'); // <-- Debug print
       if (data['success'] == true && data['pending_requests'] != null) {
         setState(() {
           pendingRequests = data['pending_requests'];
