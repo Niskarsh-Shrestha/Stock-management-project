@@ -30,11 +30,18 @@ if ($result->num_rows === 1) {
         $clear->execute();
 
         // Fetch user info
-        $userInfo = $conn->prepare("SELECT id, username, email, role FROM users WHERE email = ?");
+        $userInfo = $conn->prepare("SELECT id, username, email, role, first_login FROM users WHERE email = ?");
         $userInfo->bind_param("s", $email);
         $userInfo->execute();
         $userResult = $userInfo->get_result();
         $user = $userResult->fetch_assoc();
+
+        // After verifying the login code is correct:
+        if ($user['first_login'] == 1) {
+            $stmt = $conn->prepare("UPDATE users SET first_login = 0 WHERE id = ?");
+            $stmt->bind_param("i", $user['id']);
+            $stmt->execute();
+        }
 
         session_regenerate_id(true);
         $_SESSION['user_id']   = (int)$user['id'];
