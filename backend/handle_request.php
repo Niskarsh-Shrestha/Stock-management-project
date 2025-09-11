@@ -17,7 +17,7 @@ if ($id == 0 || empty($email)) {
 }
 
 if ($approve) {
-    $stmt = $conn->prepare("UPDATE users SET is_verified = 1 WHERE id = ?");
+    $stmt = $conn->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $subject = "Account Approved";
