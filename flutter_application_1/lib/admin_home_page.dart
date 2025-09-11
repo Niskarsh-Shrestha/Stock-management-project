@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_application_1/env.dart'; // <-- Import the Env class
+import 'package:flutter_application_1/env.dart';
 
 class AdminHomePage extends StatefulWidget {
   final String username;
@@ -20,7 +20,7 @@ class AdminHomePage extends StatefulWidget {
 }
 
 class _AdminHomePageState extends State<AdminHomePage> {
-  List pendingRequests = [];
+  List<Map<String, dynamic>> pendingRequests = [];
 
   @override
   void initState() {
@@ -32,13 +32,15 @@ class _AdminHomePageState extends State<AdminHomePage> {
     final response = await http.get(
       Uri.parse('${Env.baseUrl}/get_pending_requests.php'),
     );
-    print(response.body);
+    print('API response: ${response.body}');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (data['success'] == true && data['pending_requests'] != null) {
         setState(() {
-          pendingRequests = (data['pending_requests'] as List).map((e) => Map<String, dynamic>.from(e)).toList();
+          pendingRequests = (data['pending_requests'] as List)
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList();
         });
         print('Pending requests count: ${pendingRequests.length}');
         print('First pending request: ${pendingRequests.isNotEmpty ? pendingRequests[0] : "None"}');
