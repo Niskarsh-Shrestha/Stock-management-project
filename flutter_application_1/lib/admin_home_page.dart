@@ -11,8 +11,11 @@ Future<List<Map<String, dynamic>>> fetchPendingApprovals() async {
   }
   final body = jsonDecode(resp.body);
 
-  // Use the correct key from your API response
+  // Debug print to verify API response
+  print('API response: $body');
+
   final list = (body['pending'] ?? []) as List;
+  print('Parsed pending list: $list');
   return list.map((e) => Map<String, dynamic>.from(e)).toList();
 }
 
