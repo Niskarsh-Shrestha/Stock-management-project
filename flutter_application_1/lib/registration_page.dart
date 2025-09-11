@@ -44,7 +44,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     fetchRoles().then((roleList) {
       setState(() {
         roles = roleList;
-        selectedRole = null; // No default role selected
+        selectedRole = null;
       });
     });
   }
@@ -70,7 +70,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
     final url = Uri.parse('${Env.baseUrl}/register.php');
 
-    final response = await _client.post( // <-- use _client here
+    final response = await _client.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
@@ -88,12 +88,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'] ?? 'Registration successful. Wait for admin approval.')),
         );
+        showRegistrationCodeDialog(emailController.text.trim());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'] ?? 'Registration failed')),
         );
       }
-      showRegistrationCodeDialog(emailController.text.trim());
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Server error: ${response.statusCode}')),
