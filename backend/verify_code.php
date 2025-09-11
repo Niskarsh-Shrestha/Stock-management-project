@@ -21,7 +21,7 @@ if ((!$email && !$username) || $code === '') {
 $col = $email ? 'email' : 'username';
 $val = $email ?: $username;
 
-$stmt = $conn->prepare("SELECT id, login_code, is_verified, role, username, email FROM users WHERE {$col} = ?");
+$stmt = $conn->prepare("SELECT id, login_code, reset_code, is_verified, role, username, email FROM users WHERE {$col} = ?");
 $stmt->bind_param("s", $val);
 $stmt->execute();
 $res = $stmt->get_result();
@@ -34,29 +34,50 @@ if ((int)$row['is_verified'] !== 1) {
   exit;
 }
 
-// Compare code
-if (!hash_equals((string)$row['login_code'], (string)$code)) {
-  echo json_encode(['success' => false, 'message' => 'Invalid code']);
+// Compare code for login or password reset
+if (
+  isset($row['reset_code']) && $row['reset_code'] !== null &&
+  hash_equals((string)$row['reset_code'], (string)$code)
+) {
+  // Password reset code matched
+  $upd = $conn->prepare("UPDATE users SET reset_code = NULL WHERE id = ?");
+  $upd->bind_param("i", $row['id']);
+  $upd->execute();
+  echo json_encode([
+    'success' => true,
+    'message' => 'Password reset code verified',
+    'user'    => [
+      'id'       => (int)$row['id'],
+      'username' => $row['username'],
+      'email'    => $row['email'],
+      'role'     => $row['role'] ?? 'user'
+    ]
+  ]);
   exit;
 }
 
-// OPTIONAL: clear code after success
-$upd = $conn->prepare("UPDATE users SET login_code = NULL WHERE id = ?");
-$upd->bind_param("i", $row['id']);
-$upd->execute();
+// Compare login code for 2FA
+if (
+  isset($row['login_code']) && $row['login_code'] !== null &&
+  hash_equals((string)$row['login_code'], (string)$code)
+) {
+  $upd = $conn->prepare("UPDATE users SET login_code = NULL WHERE id = ?");
+  $upd->bind_param("i", $row['id']);
+  $upd->execute();
+  $token = bin2hex(random_bytes(24));
+  echo json_encode([
+    'success' => true,
+    'message' => '2FA verified',
+    'token'   => $token,
+    'user'    => [
+      'id'       => (int)$row['id'],
+      'username' => $row['username'],
+      'email'    => $row['email'],
+      'role'     => $row['role'] ?? 'user'
+    ]
+  ]);
+  exit;
+}
 
-// Minimal session token (opaque). For production, consider JWT.
-$token = bin2hex(random_bytes(24));
-
-echo json_encode([
-  'success' => true,
-  'message' => '2FA verified',
-  'token'   => $token,
-  'user'    => [
-    'id'       => (int)$row['id'],
-    'username' => $row['username'],
-    'email'    => $row['email'],
-    'role'     => $row['role'] ?? 'user'
-  ]
-]);
+echo json_encode(['success' => false, 'message' => 'Invalid code']);
 ?>
