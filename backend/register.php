@@ -22,6 +22,7 @@ $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 $is_verified = 0;
 $approval_message = 'Account request sent. Await admin approval.';
 $registration_code = null;
+$is_approved = 0; // Always require admin approval for new accounts
 
 // Check if trying to create manager/employee
 if ($role === 'manager' || $role === 'employee') {
@@ -65,7 +66,8 @@ if ($role === 'admin') {
 
             $mail->send();
         } catch (Exception $e) {
-            // Optionally log or handle error
+            echo json_encode(['success' => false, 'message' => 'Mail error: ' . $mail->ErrorInfo]);
+            exit;
         }
     } else {
         // First admin, auto approve
@@ -76,9 +78,12 @@ if ($role === 'admin') {
 }
 
 // Insert user
-$stmt = $conn->prepare("INSERT INTO users (username, email, password, role, is_verified, registration_code) VALUES (?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssssss", $username, $email, $hashedPassword, $role, $is_verified, $registration_code);
-$stmt->execute();
+$stmt = $conn->prepare("INSERT INTO users (username, email, password, role, is_verified, registration_code, is_approved) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("ssssssi", $username, $email, $hashedPassword, $role, $is_verified, $registration_code, $is_approved);
 
-echo json_encode(['success' => true, 'message' => $approval_message]);
+if ($stmt->execute()) {
+    echo json_encode(['success' => true, 'message' => $approval_message]);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Registration failed.']);
+}
 ?>
