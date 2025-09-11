@@ -15,7 +15,7 @@ $stmt->fetch();
 $stmt->close();
 
 if ($dbCode === $code) {
-    $update = $conn->prepare("UPDATE users SET is_verified_email = 1 WHERE email = ?");
+    $update = $conn->prepare("UPDATE users SET is_verified = 1, is_verified_email = 1 WHERE email = ?");
     $update->bind_param("s", $email);
     $update->execute();
     echo json_encode(["success" => true, "message" => "Email verified!"]);

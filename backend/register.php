@@ -31,32 +31,12 @@ $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 // Generate a 4-digit verification code
 $registration_code = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
 $is_verified = 0;
-$is_approved = 0;
-
-// Check if there are any users
-$userCount = $conn->query("SELECT COUNT(*) as cnt FROM users")->fetch_assoc()['cnt'];
-
-// Check if there is at least one admin
-$adminCount = $conn->query("SELECT COUNT(*) as cnt FROM users WHERE role = 'admin'")->fetch_assoc()['cnt'];
-
-// If no users, only allow admin registration
-if ($userCount == 0 && strtolower($role) != 'admin') {
-    echo json_encode(['success' => false, 'message' => 'First user must be an admin.']);
-    exit;
-}
-
-// If no admin, block manager/employee registration
-if ($adminCount == 0 && strtolower($role) != 'admin') {
-    echo json_encode(['success' => false, 'message' => 'At least one admin must exist before creating manager or employee accounts.']);
-    exit;
-}
-
-// First admin does not need approval
+$is_verified_email = 0;
 $is_approved = ($userCount == 0 && strtolower($role) == 'admin') ? 1 : 0;
 
 // Insert user into database
-$stmt = $conn->prepare("INSERT INTO users (username, email, password, role, is_approved, registration_code) VALUES (?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssssss", $username, $email, $hashedPassword, $role, $is_approved, $registration_code);
+$stmt = $conn->prepare("INSERT INTO users (username, email, password, role, is_verified, is_verified_email, is_approved, registration_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("ssssssss", $username, $email, $hashedPassword, $role, $is_verified, $is_verified_email, $is_approved, $registration_code);
 
 if ($stmt->execute()) {
     // Send registration code email using Resend API
