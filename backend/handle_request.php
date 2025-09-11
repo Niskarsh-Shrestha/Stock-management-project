@@ -11,7 +11,6 @@ if (!$user_id) {
     exit;
 }
 
-// Get user email
 $stmt = $conn->prepare("SELECT email FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();

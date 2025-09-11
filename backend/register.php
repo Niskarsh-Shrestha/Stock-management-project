@@ -54,40 +54,12 @@ if ($adminCount == 0 && strtolower($role) != 'admin') {
 // First admin does not need approval
 $is_approved = ($userCount == 0 && strtolower($role) == 'admin') ? 1 : 0;
 
-// Send registration code email using Resend API
-$api_key = 're_JBudTybx_3Yb7wmdpzCcJE13eqBYVLAf2'; // Your Resend API key
-
-$email_data = [
-    "from" => "no-reply@mail.stockmgmt.app", // Use your verified sender from Resend
-    "to" => $email,
-    "subject" => "Your Registration Code",
-    "html" => "<p>Your verification code is: <b>$registration_code</b></p>"
-];
-
-$ch = curl_init("https://api.resend.com/emails");
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: Bearer $api_key",
-    "Content-Type: application/json"
-]);
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($email_data));
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-$response = curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-if ($http_code !== 200 && $http_code !== 202) {
-    echo json_encode(['success' => false, 'message' => 'Mail error: ' . $response]);
-    exit;
-}
-
 // Insert user into database
-$stmt = $conn->prepare("INSERT INTO users (username, email, password, role, is_verified, registration_code, is_approved) VALUES (?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssssisi", $username, $email, $hashedPassword, $role, $is_verified, $registration_code, $is_approved);
+$stmt = $conn->prepare("INSERT INTO users (username, email, password, role, is_approved) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("ssssi", $username, $email, $hashedPassword, $role, $is_approved);
 
 if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'message' => 'Registration successful. Please check your email for the verification code.']);
+    echo json_encode(['success' => true, 'message' => 'Registration successful.']);
 } else {
     echo json_encode(['success' => false, 'message' => 'Registration failed.']);
 }
