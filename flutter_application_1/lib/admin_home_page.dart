@@ -50,6 +50,37 @@ class _AdminHomePageState extends State<AdminHomePage> {
     print('pendingRequests: $pendingRequests');
   }
 
+  void _showApprovalRequestsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Account Approval Requests'),
+        content: pendingRequests.isEmpty
+            ? Text('No pending requests.')
+            : SizedBox(
+                width: double.maxFinite,
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (var user in pendingRequests)
+                      ListTile(
+                        title: Text(user['username'] ?? ''),
+                        subtitle: Text(user['email'] ?? ''),
+                        trailing: Text(user['role'] ?? ''),
+                      ),
+                  ],
+                ),
+              ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +90,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: fetchPendingRequests,
+          ),
+          IconButton(
+            icon: Icon(Icons.person_add),
+            onPressed: _showApprovalRequestsDialog,
           ),
         ],
       ),
