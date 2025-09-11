@@ -6,10 +6,10 @@ header('Cache-Control: no-store');
 
 try {
   $sql = "
-    SELECT id, username, email, role, created_at
+    SELECT id, username, email, role
     FROM users
     WHERE is_verified = 1 AND is_approved = 0
-    ORDER BY created_at DESC
+    ORDER BY id DESC
   ";
   $res = $conn->query($sql);
   if (!$res) throw new Exception($conn->error);
