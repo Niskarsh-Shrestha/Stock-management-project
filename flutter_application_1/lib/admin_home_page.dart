@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_application_1/env.dart'; // <-- Import the Env class
 
 class AdminHomePage extends StatefulWidget {
   final String username;
@@ -29,7 +30,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Future<void> fetchPendingRequests() async {
     final response = await http.get(
-      Uri.parse('http://localhost/stock_management_project/backend/get_pending_requests.php'),
+      Uri.parse('${Env.baseUrl}/get_pending_requests.php'),
     );
     print('API response: ${response.body}'); // <-- Debug print
 
