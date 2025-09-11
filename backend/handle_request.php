@@ -2,13 +2,6 @@
 header("Content-Type: application/json");
 require_once __DIR__ . '/db.php';
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require 'PHPMailer/src/Exception.php';
-require 'PHPMailer/src/PHPMailer.php';
-require 'PHPMailer/src/SMTP.php';
-
 if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();
 }
@@ -37,28 +30,29 @@ if ($approve) {
     $message = "Your account request has been rejected by the admin.";
 }
 
-// Send email using PHPMailer
-$mail = new PHPMailer(true);
-$mailStatus = "Mail sent";
-try {
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
-    $mail->SMTPAuth = true;
-    $mail->Username = 'niskarshshrestha@gmail.com'; // <-- your Gmail address
-    $mail->Password = 'oyup fvjn otmw ctep';    // <-- your Gmail app password
-    $mail->SMTPSecure = 'tls';
-    $mail->Port = 587;
+// Send email using Resend API
+$api_key = 're_JBudTybx_3Yb7wmdpzCcJE13eqBYVLAf2';
+$email_data = [
+    "from" => "no-reply@mail.stockmgmt.app",
+    "to" => $email,
+    "subject" => $subject,
+    "html" => "<p>$message</p>"
+];
 
-    $mail->setFrom('niskarshshrestha@gmail.com', 'Admin');
-    $mail->addAddress($email);
+$ch = curl_init("https://api.resend.com/emails");
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "Authorization: Bearer $api_key",
+    "Content-Type: application/json"
+]);
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($email_data));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-    $mail->Subject = $subject;
-    $mail->Body    = $message;
+$response = curl_exec($ch);
+$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
 
-    $mail->send();
-} catch (Exception $e) {
-    $mailStatus = "Mail error: " . $mail->ErrorInfo;
-}
+$mailStatus = ($http_code === 200 || $http_code === 202) ? 'Mail sent' : 'Mail error: ' . $response;
 
 echo json_encode([
     'success' => true,
