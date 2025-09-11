@@ -1,14 +1,11 @@
 <?php
 header("Content-Type: application/json");
-include 'db.php';
+require_once __DIR__ . '/db.php';
 
-$sql = "SELECT id, username, email, role, is_verified_email FROM users WHERE is_verified = 0";
-$result = $conn->query($sql);
-
-$requests = [];
+$result = $conn->query("SELECT * FROM users WHERE is_approved = 0");
+$pending = [];
 while ($row = $result->fetch_assoc()) {
-    $requests[] = $row;
+    $pending[] = $row;
 }
-
-echo json_encode(['requests' => $requests]);
+echo json_encode(['success' => true, 'pending_requests' => $pending]);
 ?>
