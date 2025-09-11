@@ -23,20 +23,20 @@ $stmt->bind_param("ss", $input, $input);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if (!($row = $result->fetch_assoc())) {
+if (!($user = $result->fetch_assoc())) {
   echo json_encode(['success' => false, 'message' => 'Account not found']);
   exit;
 }
 
 /** ---- 3) Verify password (hashed or plain fallback) ---- */
-$ok = password_verify($password, $row['password']) || hash_equals($row['password'], $password);
+$ok = password_verify($password, $user['password']) || hash_equals($user['password'], $password);
 if (!$ok) {
   echo json_encode(['success' => false, 'message' => 'Incorrect password']);
   exit;
 }
 
 /** ---- 4) Check if the account is approved by admin ---- */
-if ($row['is_approved'] != 1) {
+if ($user['first_login'] == 1 && $user['is_approved'] != 1) {
     echo json_encode(['success' => false, 'message' => 'Account not approved by admin.']);
     exit;
 }
@@ -44,14 +44,14 @@ if ($row['is_approved'] != 1) {
 /** ---- 5) Generate and store 4-digit login code ---- */
 $login_code = str_pad((string)random_int(0, 9999), 4, '0', STR_PAD_LEFT);
 $upd = $conn->prepare("UPDATE users SET login_code = ? WHERE id = ?");
-$upd->bind_param("si", $login_code, $row['id']);
+$upd->bind_param("si", $login_code, $user['id']);
 $upd->execute();
 
 /** ---- 6) Send email via Resend API ---- */
 $api_key = 're_JBudTybx_3Yb7wmdpzCcJE13eqBYVLAf2';
 $email_data = [
     "from" => "no-reply@mail.stockmgmt.app",
-    "to" => $row['email'],
+    "to" => $user['email'],
     "subject" => "Your Admin Login Code",
     "html" => "<p>Your 4-digit login code is: <b>{$login_code}</b></p>"
 ];
@@ -77,8 +77,15 @@ $debugIncludeCode = (bool)(getenv('DEBUG_RETURN_CODE') ?: false);
 echo json_encode([
   'success'      => true,
   'require_2fa'  => true,
-  'email'        => $row['email'],
+  'email'        => $user['email'],
   'message'      => 'Login code sent to your email.',
   'mail_status'  => $mailStatus,
   'code_debug'   => $debugIncludeCode ? $login_code : null
 ]);
+
+// After successful login:
+if ($user['first_login'] == 1) {
+    $stmt = $conn->prepare("UPDATE users SET first_login = 0 WHERE id = ?");
+    $stmt->bind_param("i", $user['id']);
+    $stmt->execute();
+}
