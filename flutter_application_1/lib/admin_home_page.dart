@@ -38,7 +38,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
       final data = jsonDecode(response.body);
       if (data['success'] == true && data['pending_requests'] != null) {
         setState(() {
-          pendingRequests = data['pending_requests'];
+          pendingRequests = List<Map<String, dynamic>>.from(data['pending_requests']);
         });
         print('Pending requests count: ${pendingRequests.length}');
         print('First pending request: ${pendingRequests.isNotEmpty ? pendingRequests[0] : "None"}');
@@ -46,7 +46,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
     } else {
       print('Failed to fetch pending requests');
     }
-    print(pendingRequests.runtimeType); // Should be List
+    print('pendingRequests type: ${pendingRequests.runtimeType}');
+    print('pendingRequests: $pendingRequests');
   }
 
   @override
@@ -61,19 +62,16 @@ class _AdminHomePageState extends State<AdminHomePage> {
           ),
         ],
       ),
-      body: pendingRequests.isEmpty
-          ? Center(child: Text('No pending approval requests'))
-          : ListView.builder(
-              itemCount: pendingRequests.length,
-              itemBuilder: (context, index) {
-                final user = pendingRequests[index];
-                return ListTile(
-                  title: Text(user['username'] ?? ''),
-                  subtitle: Text(user['email'] ?? ''),
-                  trailing: Text(user['role'] ?? ''),
-                );
-              },
+      body: ListView(
+        children: [
+          for (var user in pendingRequests)
+            ListTile(
+              title: Text(user['username'] ?? ''),
+              subtitle: Text(user['email'] ?? ''),
+              trailing: Text(user['role'] ?? ''),
             ),
+        ],
+      ),
     );
   }
 }
