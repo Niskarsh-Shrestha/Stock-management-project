@@ -15,7 +15,7 @@ if (empty($email) || empty($code)) {
     exit;
 }
 
-$sql = "SELECT login_code, first_login, is_approved FROM users WHERE email = ?";
+$sql = "SELECT login_code, first_login, is_approved, role FROM users WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 $stmt->execute();
@@ -69,5 +69,20 @@ if ($result->num_rows === 1) {
     }
 } else {
     echo json_encode(["success" => false, "message" => "Email not found."]);
+}
+?>
+
+<?php
+// Role-based redirection or access control can be handled here
+$role = $_SESSION['user_role'] ?? '';
+
+if ($role == 'admin') {
+  // Admin specific code
+} else if ($role == 'data analyst' || $role == 'data_analyst') {
+  // Data analyst specific code
+} else if ($role == 'manager') {
+  // Manager specific code
+} else if ($role == 'employee') {
+  // Employee specific code
 }
 ?>

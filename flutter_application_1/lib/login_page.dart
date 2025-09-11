@@ -75,13 +75,35 @@ class _LoginPageState extends State<LoginPage> {
       show2FADialog(data['email']);
     } else if (data['success'] == true) {
       // Proceed to home page
-      final String username = data['username'];
-      final String email = data['email'];
-      final String role = data['role'];
+      final String username = data['username'] ?? '';
+      final String email = data['email'] ?? '';
+      final String role = data['role'] ?? '';
 
       Session.sid = data['sid'] as String?;
 
-      if (role == 'manager') {
+      if (role == 'admin') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AdminHomePage(
+              username: username,
+              email: email,
+              role: role,
+            ),
+          ),
+        );
+      } else if (role == 'data analyst' || role == 'data_analyst') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DataAnalystHomePage(
+              username: username,
+              email: email,
+              role: role,
+            ),
+          ),
+        );
+      } else if (role == 'manager') {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -103,33 +125,12 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         );
-      } else if (role == 'admin') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => AdminHomePage(
-              username: username,
-              email: email,
-              role: role,
-            ),
-          ),
-        );
-      } else if (role == 'data analyst') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => DataAnalystHomePage(
-              username: username,
-              email: email,
-              role: role,
-            ),
-          ),
-        );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(data['message'] ?? 'Login failed')),
       );
+      return;
     }
   }
 
@@ -197,9 +198,9 @@ class _LoginPageState extends State<LoginPage> {
         SnackBar(content: Text('Login successful!')),
       );
       // Use backend response for navigation
-      final String username = data['username'];
-      final String email = data['email'];
-      final String role = data['role'];
+      final String username = data['username'] ?? '';
+      final String email = data['email'] ?? '';
+      final String role = data['role'] ?? '';
 
       Session.sid = data['sid'] as String?;
 
