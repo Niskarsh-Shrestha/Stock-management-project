@@ -11,12 +11,9 @@ Future<List<Map<String, dynamic>>> fetchPendingApprovals() async {
   }
   final body = jsonDecode(resp.body);
 
-  if (body is Map<String, dynamic> && body['success'] == true) {
-    // Use the 'pending' key from your API response
-    final list = (body['pending'] ?? []) as List;
-    return list.map((e) => Map<String, dynamic>.from(e)).toList();
-  }
-  return [];
+  // Use the correct key from your API response
+  final list = (body['pending'] ?? []) as List;
+  return list.map((e) => Map<String, dynamic>.from(e)).toList();
 }
 
 class AdminHomePage extends StatelessWidget {
