@@ -34,7 +34,7 @@ $is_approved = 0;
 $api_key = 're_JBudTybx_3Yb7wmdpzCcJE13eqBYVLAf2'; // Your Resend API key
 
 $email_data = [
-    "from" => "niskarshshrestha@gmail.com", // Use your verified sender from Resend
+    "from" => "no-reply@mail.stockmgmt.app", // Use your verified sender from Resend
     "to" => $email,
     "subject" => "Your Registration Code",
     "html" => "<p>Your verification code is: <b>$registration_code</b></p>"

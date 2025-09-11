@@ -44,7 +44,7 @@ $upd->execute();
 $api_key = 're_JBudTybx_3Yb7wmdpzCcJE13eqBYVLAf2';
 
 $email_data = [
-    "from" => "niskarshshrestha@gmail.com",
+    "from" => "no-reply@mail.stockmgmt.app",
     "to" => $row['email'],
     "subject" => "Your Password Reset Code",
     "html" => "<p>Your 4-digit password reset code is: <b>{$forgot_code}</b></p>"

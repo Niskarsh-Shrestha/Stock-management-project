@@ -11,6 +11,7 @@ $payload = json_decode($raw, true) ?: [];
 $input    = $_POST['email']    ?? $_POST['username'] ?? $payload['email']    ?? $payload['username'] ?? '';
 $password = $_POST['password'] ?? $payload['password'] ?? '';
 
+
 if ($input === '' || $password === '') {
   echo json_encode(['success' => false, 'message' => 'Email/Username and password required']);
   exit;
@@ -49,7 +50,7 @@ $upd->execute();
 /** ---- 6) Send email via Resend API ---- */
 $api_key = 're_JBudTybx_3Yb7wmdpzCcJE13eqBYVLAf2';
 $email_data = [
-    "from" => "niskarshshrestha@gmail.com",
+    "from" => "no-reply@mail.stockmgmt.app",
     "to" => $row['email'],
     "subject" => "Your Admin Login Code",
     "html" => "<p>Your 4-digit login code is: <b>{$login_code}</b></p>"
