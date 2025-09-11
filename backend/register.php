@@ -1,14 +1,12 @@
 <?php
 header("Content-Type: application/json");
-include 'db.php';
 
-// Remove PHPMailer namespace imports; use classes directly
+$data = json_decode(file_get_contents('php://input'), true);
 
-$data = json_decode(file_get_contents("php://input"));
-$username = trim($data->username ?? '');
-$email = trim($data->email ?? '');
-$password = $data->password ?? '';
-$role = $data->role ?? '';
+$username = $data['username'] ?? '';
+$email = $data['email'] ?? '';
+$password = $data['password'] ?? '';
+$role = $data['role'] ?? '';
 
 if ($username === '' || $email === '' || $password === '' || $role === '') {
     echo json_encode(['success' => false, 'message' => 'All fields required']);
