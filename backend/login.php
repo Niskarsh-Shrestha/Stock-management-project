@@ -37,7 +37,12 @@ if (!$ok) {
 }
 
 /** ---- 4) Check if the account is approved by admin ---- */
-if ($user['first_login'] == 1 && $user['is_approved'] != 1) {
+// Check if this is the first user and admin
+$userCount = $conn->query("SELECT COUNT(*) as cnt FROM users")->fetch_assoc()['cnt'];
+$isFirstAdmin = ($userCount == 1 && strtolower($user['role']) == 'admin');
+
+// Only require approval for first login if not first admin
+if ($user['first_login'] == 1 && $user['is_approved'] != 1 && !$isFirstAdmin) {
     echo json_encode(['success' => false, 'message' => 'Account not approved by admin.']);
     exit;
 }
