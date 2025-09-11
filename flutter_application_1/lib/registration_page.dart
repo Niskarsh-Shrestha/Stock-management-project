@@ -83,16 +83,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
+      print('Registration response: $data');
       if (data['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'] ?? 'Registration successful. Wait for admin approval.')),
         );
-        showRegistrationCodeDialog(emailController.text.trim());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'] ?? 'Registration failed')),
         );
       }
+      showRegistrationCodeDialog(emailController.text.trim());
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Server error: ${response.statusCode}')),
