@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 header("Content-Type: application/json");
 
+// Read JSON payload
 $data = json_decode(file_get_contents('php://input'), true);
 
 $username = $data['username'] ?? '';
