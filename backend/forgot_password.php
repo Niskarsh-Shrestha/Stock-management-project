@@ -2,13 +2,6 @@
 header("Content-Type: application/json");
 include 'db.php';
 
-// Include PHPMailer classes
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-require 'phpmailer/src/Exception.php';
-require 'phpmailer/src/PHPMailer.php';
-require 'phpmailer/src/SMTP.php';
-
 $data = json_decode(file_get_contents("php://input"));
 $email = trim($data->email ?? '');
 
@@ -31,28 +24,32 @@ if ($result->num_rows === 1) {
     $update->bind_param("ss", $code, $email);
     $update->execute();
 
-    // Send code to email using PHPMailer
-    $mail = new PHPMailer(true);
-    try {
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'niskarshshrestha@gmail.com'; // Your Gmail address
-        $mail->Password   = 'oyup fvjn otmw ctep';   // Your Gmail App Password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+    // Send code to email using Resend API
+    $api_key = 're_JBudTybx_3Yb7wmdpzCcJE13eqBYVLAf2';
+    $email_data = [
+        "from" => "no-reply@mail.stockmgmt.app",
+        "to" => $email,
+        "subject" => "Your Password Reset Code",
+        "html" => "Your password reset code is: <b>$code</b>"
+    ];
 
-        $mail->setFrom('niskarshshrestha@gmail.com', 'Stock Management App');
-        $mail->addAddress($email);
+    $ch = curl_init("https://api.resend.com/emails");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Authorization: Bearer $api_key",
+        "Content-Type: application/json"
+    ]);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($email_data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $mail->isHTML(true);
-        $mail->Subject = 'Your Password Reset Code';
-        $mail->Body    = "Your password reset code is: <b>$code</b>";
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
 
-        $mail->send();
+    if ($http_code === 200 || $http_code === 202) {
         echo json_encode(["success" => true, "message" => "A 4-digit code has been sent to your email."]);
-    } catch (Exception $e) {
-        echo json_encode(["success" => false, "message" => "Failed to send email. Mailer Error: {$mail->ErrorInfo}"]);
+    } else {
+        echo json_encode(["success" => false, "message" => "Failed to send email. Mail error: $response"]);
     }
 } else {
     echo json_encode(["success" => false, "message" => "Email not found."]);
