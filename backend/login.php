@@ -27,11 +27,6 @@ if (!($row = $result->fetch_assoc())) {
   exit;
 }
 
-if ((int)$row['is_verified'] !== 1) {
-  echo json_encode(['success' => false, 'message' => 'Account not approved by admin.']);
-  exit;
-}
-
 /** ---- 3) Verify password (hashed or plain fallback) ---- */
 $ok = password_verify($password, $row['password']) || hash_equals($row['password'], $password);
 if (!$ok) {
@@ -39,20 +34,26 @@ if (!$ok) {
   exit;
 }
 
-/** ---- 4) Generate and store 4-digit login code ---- */
+/** ---- 4) Check if the account is approved by admin ---- */
+if ($row['is_approved'] != 1) {
+    echo json_encode(['success' => false, 'message' => 'Account not approved by admin.']);
+    exit;
+}
+
+/** ---- 5) Generate and store 4-digit login code ---- */
 $login_code = str_pad((string)random_int(0, 9999), 4, '0', STR_PAD_LEFT);
 $upd = $conn->prepare("UPDATE users SET login_code = ? WHERE id = ?");
 $upd->bind_param("si", $login_code, $row['id']);
 $upd->execute();
 
-/** ---- 5) Send email via SMTP (env-driven) ---- */
+/** ---- 6) Send email via SMTP (env-driven) ---- */
 require_once __DIR__ . '/mailer.php';
 $subject = 'Your Admin Login Code';
 $html    = "<p>Your 4-digit login code is: <b>{$login_code}</b></p>";
 
 $mailStatus = send_email_api($row['email'], $subject, $html);
 
-/** ---- 6) Optional: return code in response for debugging only ---- */
+/** ---- 7) Optional: return code in response for debugging only ---- */
 $debugIncludeCode = (bool)(getenv('DEBUG_RETURN_CODE') ?: false);
 
 echo json_encode([

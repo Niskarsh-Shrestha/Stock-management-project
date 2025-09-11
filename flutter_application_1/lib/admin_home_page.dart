@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'product_list.dart';
-import 'category_list.dart';
+import 'category_list.dart' as category_list;
 import 'supplier_list.dart';
 import 'dart:convert';
-import 'http_client.dart';
+import 'http_client.dart' as http_client;
 import 'package:http/http.dart' as http;
 import 'manage_users_page.dart';
 import 'manage_roles_page.dart';
@@ -37,7 +37,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
   @override
   void initState() {
     super.initState();
-    _client = createHttpClient();
+    _client = http_client.createHttpClient();
     fetchUsers();
     fetchRoles();
     _fetchLowStockProducts();
@@ -720,7 +720,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const CategoryListPage(isManager: true),
+                        builder: (_) => const category_list.CategoryListPage(isManager: true),
                       ),
                     );
                   },

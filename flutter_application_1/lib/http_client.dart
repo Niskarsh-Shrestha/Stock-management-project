@@ -1,3 +1,5 @@
+export 'http_client_io.dart' if (dart.library.html) 'http_client_web.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/browser_client.dart' show BrowserClient;
@@ -10,5 +12,3 @@ http.Client createHttpClient() {
   }
   return http.Client();
 }
-
-export 'http_client_io.dart' if (dart.library.html) 'http_client_web.dart';

@@ -13,6 +13,7 @@ $username = trim($data->username ?? '');
 $email = trim($data->email ?? '');
 $password = $data->password ?? '';
 $role = trim($data->role ?? '');
+$is_approved = 0; // Add is_approved variable
 
 if ($user_role !== 'admin' && $user_role !== 'manager') {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
@@ -37,8 +38,9 @@ if ($check->num_rows > 0) {
 
 $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-$stmt = $conn->prepare("INSERT INTO users (username, email, role, password, is_verified) VALUES (?, ?, ?, ?, 1)");
-$stmt->bind_param("ssss", $username, $email, $role, $hashedPassword);
+// Add is_approved to your INSERT statement
+$sql = "INSERT INTO users (username, password, email, is_approved, ...) VALUES ('$username', '$hashedPassword', '$email', $is_approved, ...)";
+$stmt = $conn->prepare($sql);
 
 if ($stmt->execute()) {
     echo json_encode(["success" => true, "message" => "User added successfully."]);
