@@ -30,30 +30,31 @@ $registration_code = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
 $is_verified = 0;
 $is_approved = 0;
 
-// Send registration code email
-require 'phpmailer/src/Exception.php';
-require 'phpmailer/src/PHPMailer.php';
-require 'phpmailer/src/SMTP.php';
+// Send registration code email using Resend API
+$api_key = 're_JBudTybx_3Yb7wmdpzCcJE13eqBYVLAf2'; // Your Resend API key
 
-$mail = new PHPMailer\PHPMailer\PHPMailer(true);
-try {
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
-    $mail->SMTPAuth = true;
-    $mail->Username = 'niskarshshrestha@gmail.com'; // your Gmail address
-    $mail->Password = 'oyup fvjn otmw ctep';        // your Gmail app password
-    $mail->SMTPSecure = 'tls';
-    $mail->Port = 587;
+$email_data = [
+    "from" => "niskarshshrestha@gmail.com", // Use your verified sender from Resend
+    "to" => $email,
+    "subject" => "Your Registration Code",
+    "html" => "<p>Your verification code is: <b>$registration_code</b></p>"
+];
 
-    $mail->setFrom('niskarshshrestha@gmail.com', 'Admin');
-    $mail->addAddress($email);
+$ch = curl_init("https://api.resend.com/emails");
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "Authorization: Bearer $api_key",
+    "Content-Type: application/json"
+]);
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($email_data));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-    $mail->Subject = "Your Registration Code";
-    $mail->Body    = "Your verification code is: $registration_code";
+$response = curl_exec($ch);
+$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
 
-    $mail->send();
-} catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Mail error: ' . $mail->ErrorInfo]);
+if ($http_code !== 200 && $http_code !== 202) {
+    echo json_encode(['success' => false, 'message' => 'Mail error: ' . $response]);
     exit;
 }
 

@@ -46,12 +46,29 @@ $upd = $conn->prepare("UPDATE users SET login_code = ? WHERE id = ?");
 $upd->bind_param("si", $login_code, $row['id']);
 $upd->execute();
 
-/** ---- 6) Send email via SMTP (env-driven) ---- */
-require_once __DIR__ . '/mailer.php';
-$subject = 'Your Admin Login Code';
-$html    = "<p>Your 4-digit login code is: <b>{$login_code}</b></p>";
+/** ---- 6) Send email via Resend API ---- */
+$api_key = 're_JBudTybx_3Yb7wmdpzCcJE13eqBYVLAf2';
+$email_data = [
+    "from" => "niskarshshrestha@gmail.com",
+    "to" => $row['email'],
+    "subject" => "Your Admin Login Code",
+    "html" => "<p>Your 4-digit login code is: <b>{$login_code}</b></p>"
+];
 
-$mailStatus = send_email_api($row['email'], $subject, $html);
+$ch = curl_init("https://api.resend.com/emails");
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "Authorization: Bearer $api_key",
+    "Content-Type: application/json"
+]);
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($email_data));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+$mailStatus = ($http_code === 200 || $http_code === 202) ? 'sent' : $response;
 
 /** ---- 7) Optional: return code in response for debugging only ---- */
 $debugIncludeCode = (bool)(getenv('DEBUG_RETURN_CODE') ?: false);
