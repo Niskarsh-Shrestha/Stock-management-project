@@ -38,7 +38,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
       final data = jsonDecode(response.body);
       if (data['success'] == true && data['pending_requests'] != null) {
         setState(() {
-          pendingRequests = List<Map<String, dynamic>>.from(data['pending_requests']);
+          pendingRequests = (data['pending_requests'] as List).map((e) => Map<String, dynamic>.from(e)).toList();
         });
         print('Pending requests count: ${pendingRequests.length}');
         print('First pending request: ${pendingRequests.isNotEmpty ? pendingRequests[0] : "None"}');
