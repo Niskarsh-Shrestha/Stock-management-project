@@ -31,7 +31,7 @@ class _EmployeeCategoryListPageState extends State<EmployeeCategoryListPage> {
   Future<void> _fetchCategories() async {
     setState(() => _isLoading = true);
     try {
-      final response = await http.get(Uri.parse('${Env.baseUrl}/some_file.php'));
+      final response = await http.get(Uri.parse('${Env.baseUrl}/get_categories.php'));
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         if (decoded['categories'] is List) {

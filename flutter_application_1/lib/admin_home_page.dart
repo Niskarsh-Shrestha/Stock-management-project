@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'config.dart';
+import 'env.dart';
 
 Future<List<Map<String, dynamic>>> fetchPendingApprovals() async {
-  final uri = Uri.parse('${AppConfig.apiBase}/get_pending_requests.php');
+  final uri = Uri.parse('${Env.baseUrl}/get_pending_requests.php');
   final resp = await http.get(uri);
   if (resp.statusCode != 200) {
     throw Exception('HTTP ${resp.statusCode}: ${resp.body}');
