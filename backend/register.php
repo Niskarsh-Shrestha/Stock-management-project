@@ -11,12 +11,6 @@ header("Content-Type: application/json");
 // Always include DB first!
 require 'db.php';
 
-// Count existing users
-$userCount = $conn->query("SELECT COUNT(*) FROM users")->fetch_row()[0];
-
-// If first user and role is admin, auto-approve
-$is_approved = ($userCount == 0 && strtolower($role) == 'admin') ? 1 : 0;
-
 // Read JSON payload
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -24,6 +18,14 @@ $username = $data['username'] ?? '';
 $email = $data['email'] ?? '';
 $password = $data['password'] ?? '';
 $role = $data['role'] ?? '';
+
+// Count existing users
+$userCount = $conn->query("SELECT COUNT(*) FROM users")->fetch_row()[0];
+
+// If first user and role is admin, auto-approve
+$is_approved = ($userCount == 0 && strtolower($role) == 'admin') ? 1 : 0;
+$is_verified = 0;
+$is_verified_email = 0;
 
 // Validate fields
 if (!$username || !$email || !$password || !$role) {
