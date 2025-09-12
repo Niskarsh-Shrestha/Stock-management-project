@@ -11,12 +11,12 @@ Future<List<Map<String, dynamic>>> fetchPendingApprovals() async {
     throw Exception('HTTP ${resp.statusCode}: ${resp.body}');
   }
   final body = jsonDecode(resp.body);
-
-  // Debug print to verify API response
-  print('API response: $body');
-
   final list = (body['pending'] ?? []) as List;
-  print('Parsed pending list: $list');
+  if (list.isEmpty) {
+    // Show "No pending requests."
+  } else {
+    // Show the list of pending requests
+  }
   return list.map((e) => Map<String, dynamic>.from(e)).toList();
 }
 
