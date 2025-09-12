@@ -14,8 +14,7 @@ require 'db.php';
 // Count existing users
 $userCount = $conn->query("SELECT COUNT(*) FROM users")->fetch_row()[0];
 
-$is_verified = 0;
-$is_verified_email = 0;
+// If first user and role is admin, auto-approve
 $is_approved = ($userCount == 0 && strtolower($role) == 'admin') ? 1 : 0;
 
 // Read JSON payload
