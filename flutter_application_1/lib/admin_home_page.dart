@@ -35,7 +35,15 @@ class AdminHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Admin Home')),
+      appBar: AppBar(
+        title: Text('Admin Home'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () => showApprovalRequestsDialog(context),
+          )
+        ],
+      ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: fetchPendingApprovals(),
         builder: (ctx, snap) {
@@ -59,4 +67,33 @@ class AdminHomePage extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> showApprovalRequestsDialog(BuildContext context) async {
+  final pending = await fetchPendingApprovals();
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Account Approval Requests'),
+      content: pending.isEmpty
+          ? const Text('No pending requests.')
+          : SizedBox(
+              width: 300,
+              child: ListView(
+                shrinkWrap: true,
+                children: pending.map((u) => ListTile(
+                  title: Text(u['username'] ?? ''),
+                  subtitle: Text(u['email'] ?? ''),
+                  trailing: Text(u['role'] ?? ''),
+                )).toList(),
+              ),
+            ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: const Text('Close'),
+        ),
+      ],
+    ),
+  );
 }
