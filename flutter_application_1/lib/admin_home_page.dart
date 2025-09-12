@@ -70,7 +70,7 @@ class AdminHomePage extends StatelessWidget {
 }
 
 Future<void> showApprovalRequestsDialog(BuildContext context) async {
-  print('Dialog opened');
+  print('Dialog function called');
   showDialog(
     context: context,
     builder: (ctx) {
@@ -78,6 +78,8 @@ Future<void> showApprovalRequestsDialog(BuildContext context) async {
         future: fetchPendingApprovals(),
         builder: (ctx, snap) {
           print('Dialog pending: ${snap.data}');
+          print('Dialog error: ${snap.error}');
+          print('Dialog state: ${snap.connectionState}');
           if (snap.connectionState != ConnectionState.done) {
             return AlertDialog(
               title: const Text('Account Approval Requests'),
