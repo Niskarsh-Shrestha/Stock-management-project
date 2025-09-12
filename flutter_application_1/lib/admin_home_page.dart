@@ -70,9 +70,9 @@ class AdminHomePage extends StatelessWidget {
 }
 
 Future<void> showApprovalRequestsDialog(BuildContext context) async {
-  print('Dialog opened'); // <-- Add this line
+  print('Dialog opened');
   final pending = await fetchPendingApprovals();
-  print('Dialog pending: $pending'); // <-- Add this line
+  print('Dialog pending: $pending');
   showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
