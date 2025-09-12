@@ -8,7 +8,7 @@ try {
   $sql = "
     SELECT id, username, email, role
     FROM users
-    WHERE is_verified = 1 AND is_approved = 0
+    WHERE is_approved = 0
     ORDER BY id DESC
   ";
   $res = $conn->query($sql);
