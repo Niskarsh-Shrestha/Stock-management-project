@@ -71,31 +71,53 @@ class AdminHomePage extends StatelessWidget {
 
 Future<void> showApprovalRequestsDialog(BuildContext context) async {
   print('Dialog opened');
-  final pending = await fetchPendingApprovals();
-  print('Dialog pending: $pending');
   showDialog(
     context: context,
-    builder: (ctx) => AlertDialog(
-      title: const Text('Account Approval Requests'),
-      content: pending.isEmpty
-          ? const Text('No pending requests.')
-          : SizedBox(
-              width: 300,
-              child: ListView(
-                shrinkWrap: true,
-                children: pending.map((u) => ListTile(
-                  title: Text(u['username'] ?? ''),
-                  subtitle: Text(u['email'] ?? ''),
-                  trailing: Text(u['role'] ?? ''),
-                )).toList(),
+    builder: (ctx) {
+      return FutureBuilder<List<Map<String, dynamic>>>(
+        future: fetchPendingApprovals(),
+        builder: (ctx, snap) {
+          print('Dialog pending: ${snap.data}');
+          if (snap.connectionState != ConnectionState.done) {
+            return AlertDialog(
+              title: const Text('Account Approval Requests'),
+              content: const SizedBox(
+                width: 300,
+                child: Center(child: CircularProgressIndicator()),
               ),
-            ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx),
-          child: const Text('Close'),
-        ),
-      ],
-    ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          }
+          final pending = snap.data ?? [];
+          return AlertDialog(
+            title: const Text('Account Approval Requests'),
+            content: pending.isEmpty
+                ? const Text('No pending requests.')
+                : SizedBox(
+                    width: 300,
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: pending.map((u) => ListTile(
+                        title: Text(u['username'] ?? ''),
+                        subtitle: Text(u['email'] ?? ''),
+                        trailing: Text(u['role'] ?? ''),
+                      )).toList(),
+                    ),
+                  ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+    },
   );
 }
