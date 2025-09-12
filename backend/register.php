@@ -23,7 +23,7 @@ $role = $data['role'] ?? '';
 $userCount = $conn->query("SELECT COUNT(*) FROM users")->fetch_row()[0];
 
 // If first user and role is admin, auto-approve
-$is_approved = ($userCount == 0 && strtolower($role) == 'admin') ? 1 : 0;
+$is_approved = 1;
 $is_verified = 0;
 $is_verified_email = 0;
 

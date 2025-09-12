@@ -4,22 +4,6 @@ import 'package:http/http.dart' as http;
 import 'config.dart';
 import 'env.dart';
 
-Future<List<Map<String, dynamic>>> fetchPendingApprovals() async {
-  final uri = Uri.parse('${Env.baseUrl}/get_pending_requests.php');
-  final resp = await http.get(uri);
-  if (resp.statusCode != 200) {
-    throw Exception('HTTP ${resp.statusCode}: ${resp.body}');
-  }
-  final body = jsonDecode(resp.body);
-  final list = (body['pending'] ?? []) as List;
-  if (list.isEmpty) {
-    // Show "No pending requests."
-  } else {
-    // Show the list of pending requests
-  }
-  return list.map((e) => Map<String, dynamic>.from(e)).toList();
-}
-
 class AdminHomePage extends StatelessWidget {
   final String username;
   final String email;
@@ -37,89 +21,13 @@ class AdminHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Admin Home'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () => showApprovalRequestsDialog(context),
-          )
-        ],
+        // Removed notification icon
       ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: fetchPendingApprovals(),
-        builder: (ctx, snap) {
-          if (snap.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final items = snap.data ?? [];
-          if (items.isEmpty) return const Center(child: Text('No pending approvals.'));
-          return ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (ctx, i) {
-              final u = items[i];
-              return ListTile(
-                title: Text(u['username'] ?? ''),
-                subtitle: Text(u['email'] ?? ''),
-                trailing: Text(u['role'] ?? ''),
-              );
-            },
-          );
-        },
+      body: Center(
+        child: Text('Welcome, $username!'),
       ),
     );
   }
 }
 
-Future<void> showApprovalRequestsDialog(BuildContext context) async {
-  print('Dialog function called');
-  showDialog(
-    context: context,
-    builder: (ctx) {
-      return FutureBuilder<List<Map<String, dynamic>>>(
-        future: fetchPendingApprovals(),
-        builder: (ctx, snap) {
-          print('Dialog pending: ${snap.data}');
-          print('Dialog error: ${snap.error}');
-          print('Dialog state: ${snap.connectionState}');
-          if (snap.connectionState != ConnectionState.done) {
-            return AlertDialog(
-              title: const Text('Account Approval Requests'),
-              content: const SizedBox(
-                width: 300,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Close'),
-                ),
-              ],
-            );
-          }
-          final pending = snap.data ?? [];
-          return AlertDialog(
-            title: const Text('Account Approval Requests'),
-            content: pending.isEmpty
-                ? const Text('No pending requests.')
-                : SizedBox(
-                    width: 300,
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: pending.map((u) => ListTile(
-                        title: Text(u['username'] ?? ''),
-                        subtitle: Text(u['email'] ?? ''),
-                        trailing: Text(u['role'] ?? ''),
-                      )).toList(),
-                    ),
-                  ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Close'),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
+// Remove fetchPendingApprovals and showApprovalRequestsDialog functions
