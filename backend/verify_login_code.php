@@ -23,14 +23,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows === 1) {
     $row = $result->fetch_assoc();
-    // Only require approval for first login
-    if (
-        isset($row['first_login']) && $row['first_login'] == 1 &&
-        isset($row['is_approved']) && $row['is_approved'] != 1
-    ) {
-        echo json_encode(['success' => false, 'message' => 'Account not approved by admin.']);
-        exit;
-    }
+    // Removed admin approval check
 
     if ($row['login_code'] === $code) {
         // Clear code after successful verification

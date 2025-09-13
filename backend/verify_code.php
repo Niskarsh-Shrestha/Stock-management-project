@@ -29,10 +29,7 @@ if (!($row = $res->fetch_assoc())) {
   echo json_encode(['success' => false, 'message' => 'Account not found']);
   exit;
 }
-if ((int)$row['is_verified'] !== 1) {
-  echo json_encode(['success' => false, 'message' => 'Account not approved by admin.']);
-  exit;
-}
+  // Removed admin approval check
 
 // Compare code for login or password reset
 if (

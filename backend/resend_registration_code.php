@@ -30,10 +30,7 @@ if (!($row = $res->fetch_assoc())) {
     echo json_encode(['success' => false, 'message' => 'Account not found']);
     exit;
 }
-if ((int)$row['is_verified'] !== 1) {
-    echo json_encode(['success' => false, 'message' => 'Account not approved by admin.']);
-    exit;
-}
+    // Removed admin approval check
 
 $registration_code = str_pad((string)random_int(0, 9999), 4, '0', STR_PAD_LEFT);
 $upd = $conn->prepare("UPDATE users SET registration_code = ? WHERE id = ?");
