@@ -1,5 +1,4 @@
 <?php
-// filepath: c:\xampp\htdocs\stock_management_project\backend\add_user.php
 header("Content-Type: application/json");
 include 'db.php';
 include 'auth_check.php';

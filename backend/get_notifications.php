@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json");
-include 'db.php';
+require_once 'db.php';
 
 $role = $_GET['role'] ?? 'Employees'; // Pass 'Employees' or 'Managers' or 'All'
 
@@ -11,6 +11,11 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $role);
 $stmt->execute();
 $result = $stmt->get_result();
+
+if (!$result) {
+    echo json_encode(['success' => false, 'message' => 'Database query failed.']);
+    exit;
+}
 
 $notifications = [];
 while ($row = $result->fetch_assoc()) {
