@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: application/json");
-include 'db.php';
-include 'auth_check.php';
+require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth_check.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();
@@ -38,8 +38,15 @@ if ($check->num_rows > 0) {
 $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
 // Add is_approved to your INSERT statement
-$sql = "INSERT INTO users (username, password, email, is_approved, ...) VALUES ('$username', '$hashedPassword', '$email', $is_approved, ...)";
+
+// Use correct prepared statement and bind_param
+$sql = "INSERT INTO users (username, password, email, role, is_approved) VALUES (?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    echo json_encode(["success" => false, "message" => "Database error: " . $conn->error]);
+    exit;
+}
+$stmt->bind_param("ssssi", $username, $hashedPassword, $email, $role, $is_approved);
 
 if ($stmt->execute()) {
     echo json_encode(["success" => true, "message" => "User added successfully."]);
