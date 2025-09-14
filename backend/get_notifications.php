@@ -13,7 +13,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if (!$result) {
-    echo json_encode(['success' => false, 'message' => 'Database query failed.']);
+    echo json_encode(['success' => fase, 'message' => 'Database query failed.']);
     exit;
 }
 

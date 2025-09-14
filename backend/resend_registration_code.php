@@ -11,6 +11,8 @@ require_once __DIR__ . '/db.php';
 
 $raw = file_get_contents("php://input");
 $payload = json_decode($raw, true) ?: [];
+
+// Reads email or username from input
 $email    = $_POST['email']    ?? $payload['email']    ?? null;
 $username = $_POST['username'] ?? $payload['username'] ?? null;
 
@@ -22,6 +24,7 @@ if (!$email && !$username) {
 $col = $email ? 'email' : 'username';
 $val = $email ?: $username;
 
+// Finds user by email or username
 $stmt = $conn->prepare("SELECT id, email, is_verified FROM users WHERE {$col} = ?");
 $stmt->bind_param("s", $val);
 $stmt->execute();
@@ -30,8 +33,8 @@ if (!($row = $res->fetch_assoc())) {
     echo json_encode(['success' => false, 'message' => 'Account not found']);
     exit;
 }
-    // Removed admin approval check
-
+    
+// Generates a new 4-digit code and updates user
 $registration_code = str_pad((string)random_int(0, 9999), 4, '0', STR_PAD_LEFT);
 $upd = $conn->prepare("UPDATE users SET registration_code = ? WHERE id = ?");
 $upd->bind_param("si", $registration_code, $row['id']);

@@ -86,7 +86,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       print('Registration response: $data');
       if (data['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(data['message'] ?? 'Registration successful. Wait for admin approval.')),
+          SnackBar(content: Text(data['message'] ?? 'Registration successful')),
         );
         showRegistrationCodeDialog(emailController.text.trim());
       } else {
