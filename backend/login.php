@@ -36,20 +36,10 @@ if (!$ok) {
   exit;
 }
 
-/** ---- 4) Check if the account is approved by admin ---- */
 // Check if this is the first user and admin
 $userCount = $conn->query("SELECT COUNT(*) as cnt FROM users")->fetch_assoc()['cnt'];
 $isFirstAdmin = ($userCount == 1 && strtolower($user['role']) == 'admin');
 
-// Only require approval for first login if not first admin
-if (
-    isset($user['first_login']) && $user['first_login'] == 1 &&
-    isset($user['is_approved']) && $user['is_approved'] != 1 &&
-    !$isFirstAdmin
-) {
-    echo json_encode(['success' => false, 'message' => 'Account not approved by admin.']);
-    exit;
-}
 
 /** ---- 5) Generate and store 4-digit login code ---- */
 $login_code = str_pad((string)random_int(0, 9999), 4, '0', STR_PAD_LEFT);
