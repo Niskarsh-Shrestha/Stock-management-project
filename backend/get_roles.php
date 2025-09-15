@@ -3,7 +3,7 @@
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $allowed_origins = [
     'https://stock-management-project.vercel.app',
-    'http://localhost:63166' // <-- Your current local Flutter port
+    'http://localhost:59171' // <-- Your current local Flutter port
 ];
 if (in_array($origin, $allowed_origins, true)) {
     header("Access-Control-Allow-Origin: $origin");
