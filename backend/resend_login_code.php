@@ -1,6 +1,6 @@
 <?php
 // Allow CORS for frontend app
-header("Access-Control-Allow-Origin: https://stock-management-project.vercel.app");
+header("Access-Control-Allow-Origin: *"); // Allow requests from any origin
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
