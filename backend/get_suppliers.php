@@ -2,7 +2,9 @@
 error_reporting(0);
 ini_set('display_errors', 0);
 
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: https://stock-management-project.vercel.app");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 // Show errors for debugging (comment out in production)
 ini_set('display_errors', 1);

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/db.php'; // Include database connection
+header("Access-Control-Allow-Origin: *"); 
 header('Content-Type: application/json'); // Set response type to JSON
 
 // Check for session ID in custom header (for API clients)

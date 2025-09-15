@@ -1,5 +1,8 @@
 <?php
 header("Content-Type: application/json");
+header("Access-Control-Allow-Origin: https://stock-management-project.vercel.app");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 require_once 'db.php';
 
 $role = $_GET['role'] ?? 'Employees'; // Pass 'Employees' or 'Managers' or 'All'
