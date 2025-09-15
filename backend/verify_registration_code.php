@@ -1,4 +1,5 @@
 <?php
+include 'cors.php';
 // verify_registration_code.php
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *"); // Allow requests from any origin

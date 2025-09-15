@@ -1,4 +1,5 @@
 <?php
+include 'cors.php';
 require_once __DIR__.'/cors.php';
 require_once __DIR__.'/db.php';
 header("Access-Control-Allow-Origin: *"); // Allow requests from any origin

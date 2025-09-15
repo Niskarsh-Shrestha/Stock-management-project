@@ -1,4 +1,5 @@
 <?php
+include 'cors.php';
 // Allow CORS for frontend app
 header("Access-Control-Allow-Origin: *"); // Allow requests from any origin
 header("Access-Control-Allow-Methods: POST, OPTIONS");

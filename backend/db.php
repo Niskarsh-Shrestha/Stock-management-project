@@ -1,4 +1,5 @@
 <?php
+include 'cors.php';
 // ===== CORS (must reflect your site; NOT "*") =====
 $allowedOrigin = getenv('CORS_ALLOW_ORIGIN') ?: 'https://stock-management-project.vercel.app';
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/db.php'; // Include database connection
-header("Access-Control-Allow-Origin: *"); header("Access-Control-Allow-Origin: *"); // Allow requests from any origin
+include 'cors.php';
+header("Access-Control-Allow-Origin: *");  // Allow requests from any origin
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
