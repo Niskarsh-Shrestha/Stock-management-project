@@ -3,7 +3,6 @@ $allowed_origins = [
   'https://stock-management-project.vercel.app',
   'http://localhost:3000',
   'http://localhost:5500',
-  'http://localhost:59171'
 
 ];
 
